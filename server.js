@@ -14,7 +14,7 @@ import storeModel from './models/storeModel.js';
 
 const app = express();
 const corsOptions = {
-	origin: "https://vercel.app" && "http://localhost:3000",
+	origin: "https://blackedmarket.vercel.app" || "http://localhost:3000",
 	optionsSuccessStatus: 200, // For legacy browser support
 	// method: "GET, POST, DELETE,",
 };
