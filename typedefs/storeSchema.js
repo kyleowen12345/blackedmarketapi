@@ -14,10 +14,10 @@ export default gql`
   }
 
   extend type Query {
-    storespaginate(curPage:Int!): Paginator!
+    storespaginate(curPage:String!): Paginator!
   }
   type Paginator {
-    curPage: Int
+    curPage: String
     maxPage: Int
     storeCount: Int
     stores: [Store!]!

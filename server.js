@@ -13,7 +13,12 @@ import userModel from './models/userModel.js';
 import storeModel from './models/storeModel.js';
 
 const app = express();
-app.use(cors());
+const corsOptions = {
+	origin: "https://vercel.app" && "http://localhost:3000",
+	optionsSuccessStatus: 200, // For legacy browser support
+	// method: "GET, POST, DELETE,",
+};
+app.use(cors(corsOptions));
 app.use(helmet({ contentSecurityPolicy: (process.env.NODE_ENV === 'production') ? undefined : false })) 
 dotenv.config();
 
