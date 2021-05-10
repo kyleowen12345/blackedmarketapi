@@ -1,4 +1,4 @@
 import userResolver from './userResolver.js';
+import storeResolver from './storeResolver.js'
 
-
-export default [userResolver];
+export default [userResolver,storeResolver];
