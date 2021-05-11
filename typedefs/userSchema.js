@@ -19,7 +19,6 @@ export default gql`
   }
   type Token {
     token: String!
-    user: User!
   }
   extend type Query {
     user(id:ID): User!

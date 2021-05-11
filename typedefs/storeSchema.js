@@ -10,7 +10,8 @@ export default gql`
     sellerName:User!
     socialMediaAcc:String!
     createdAt:String!
-    contactNumber:String !
+    contactNumber:String!
+    storeBackgroundImage:String!
   }
 
   extend type Query {

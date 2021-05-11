@@ -25,8 +25,8 @@ export default {
       if(savedUser) throw new AuthenticationError('User Already exist')
       const hashedPassword=await bcrypt.hash(password,12)
       const user = await userModel.create({name, email, password:hashedPassword });
-      const token = jwt.sign({ id: user.id,email:user.email }, 'riddlemethis', { expiresIn: 24 * 10 * 50 });
-      return {user:user,token:token};
+      const token = jwt.sign({ id: user.id,email:user.email }, 'riddlemethis', { expiresIn: '24h'  });
+      return {token}
       } catch (error) {
      return error
       }
@@ -43,12 +43,9 @@ export default {
       if (!matchPasswords) {
         throw new AuthenticationError('Invalid credentials');
       }
-      const token = jwt.sign({ id: user.id,email:user.email }, 'riddlemethis', { expiresIn: 24 * 10 * 50 });
+      const token = jwt.sign({ id: user.id,email:user.email }, 'riddlemethis', { expiresIn: '24h'  });
 
-      return {
-        token,
-        user:user
-      };
+      return {token};
     },
   },
 };
