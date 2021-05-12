@@ -23,12 +23,15 @@
     "apollo-server-express": "^2.24.0",
     "bcrypt": "^5.0.1",
     "cors": "^2.8.5",
+    "crypto": "^1.0.1",
     "dotenv": "^9.0.1",
     "express": "^4.17.1",
     "graphql": "^15.5.0",
     "helmet": "^4.6.0",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.12.7",
+    "nodemailer": "^6.6.0",
+    "nodemailer-sendgrid-transport": "^0.2.0",
     "nodemon": "^2.0.7"
   }
 }

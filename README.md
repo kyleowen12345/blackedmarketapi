@@ -2,4 +2,6 @@
 
 # ENV variables
 
-# MONGO_URI
+MONGO_URI
+API_KEY
+PUBLIC_URL

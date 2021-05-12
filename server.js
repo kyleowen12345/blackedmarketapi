@@ -12,15 +12,16 @@ import resolvers from './resolvers/index.js';
 import userModel from './models/userModel.js';
 import storeModel from './models/storeModel.js';
 
+dotenv.config();
 const app = express();
 const corsOptions = {
-	origin: "https://blackedmarket.vercel.app" ,
+	origin: process.env.PUBLIC_URL,
 	optionsSuccessStatus: 200, // For legacy browser support
 	// method: "GET, POST, DELETE,",
 };
 app.use(cors(corsOptions));
 app.use(helmet({ contentSecurityPolicy: (process.env.NODE_ENV === 'production') ? undefined : false })) 
-dotenv.config();
+
 
 mongoose.connect(
     process.env.MONGO_URI,
