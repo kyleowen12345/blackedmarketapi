@@ -16,12 +16,12 @@ const transporter = nodemailer.createTransport(
 );
 export default {
   Query: {
-    user: async (parent, {id}, { models: { userModel } }, info) => {
-    //   if (!me) {
-    //     throw new AuthenticationError('You are not authenticated');
-    //   }
-    //   console.log(me.id)
-      const user = await userModel.findById({ _id: id }).exec();
+    user: async (parent, args, { models: { userModel },me }, info) => {
+      if (!me) {
+        throw new AuthenticationError('You are not authenticated');
+      }
+      console.log(me.id)
+      const user = await userModel.findById({ _id: me.id }).exec();
       return user;
     },
     
@@ -32,16 +32,12 @@ export default {
       if(!name) throw new AuthenticationError('Please create a name')
       if(!email) throw new AuthenticationError('Please create a email')
       if(!password) throw new AuthenticationError('Please create a password')
-      try {
       const savedUser=await userModel.findOne({email:email})
       if(savedUser) throw new AuthenticationError('User Already exist')
       const hashedPassword=await bcrypt.hash(password,12)
       const user = await userModel.create({name, email, password:hashedPassword });
       const token = jwt.sign({ id: user.id,email:user.email }, 'riddlemethis', { expiresIn: '24h'  });
       return {token}
-      } catch (error) {
-     return error
-      }
       
     },
     login: async (parent, { email, password }, { models: { userModel } }, info) => {
@@ -80,7 +76,7 @@ export default {
         })
         return {token}
       } catch (error) {
-        return {token:error}
+        return error
       }
        
     },

@@ -11,6 +11,7 @@ import resolvers from './resolvers/index.js';
 
 import userModel from './models/userModel.js';
 import storeModel from './models/storeModel.js';
+import productModel from './models/productModel.js'
 
 dotenv.config();
 const app = express();
@@ -57,7 +58,8 @@ mongoose.connect(
           me,
           models: {
             userModel,
-            storeModel
+            storeModel,
+            productModel
           },
         };
       }

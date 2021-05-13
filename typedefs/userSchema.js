@@ -21,7 +21,7 @@ export default gql`
     token: String!
   }
   extend type Query {
-    user(id:ID): User!
+    user: User!
 
   }
   extend type Mutation {
