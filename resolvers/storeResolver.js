@@ -16,6 +16,14 @@ export default {
         storeCount:storeCount
       };
     },
+    storeInfo: async (parent, {id}, { models: { storeModel } }, info) => {
+      //   if (!me) {
+      //     throw new AuthenticationError('You are not authenticated');
+      //   }
+     
+        const store = await storeModel.findById({_id:id}).exec()
+        return store
+      },
   },
 //   Mutation: {
 //     createPost: async (parent, { title, content }, { models: { postsModel }, me }, info) => {

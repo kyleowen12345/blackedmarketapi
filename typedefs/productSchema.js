@@ -17,10 +17,18 @@ export default gql`
 
   extend type Query {
     landingpage: Landing!
+    productInfo(id:ID!):Product!
+    productpaginate(curPage:String!): ProductPaginator!
   }
   type Landing {
     products: [Product!]!
     stores: [Store!]!
+}
+type ProductPaginator {
+  curPage: String
+  maxPage: Int
+  productCount: Int
+  products: [Product!]!
 }
 
 

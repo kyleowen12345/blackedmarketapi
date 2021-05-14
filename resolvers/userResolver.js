@@ -20,7 +20,6 @@ export default {
       if (!me) {
         throw new AuthenticationError('You are not authenticated');
       }
-      console.log(me.id)
       const user = await userModel.findById({ _id: me.id }).exec();
       return user;
     },

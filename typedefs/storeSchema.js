@@ -16,6 +16,7 @@ export default gql`
 
   extend type Query {
     storespaginate(curPage:String!): Paginator!
+    storeInfo(id:ID!):Store!
   }
   type Paginator {
     curPage: String
