@@ -16,18 +16,49 @@ export default gql`
     expireToken:String
     Seller:String
     createdAt:String
+    cart:Product!
   }
   type Token {
     token: String!
   }
+  type Cart{
+    id:String!
+    quantity:String!
+    date:String!
+  }
+  type History{
+    id:String!
+    name:String!
+    price:String!
+    image:String!
+    quantity:String!
+    storeName:String!
+    storeOwner:String!
+    dateOfPurchase:String!
+  }
+  type historyPaginate{
+    curPage: String
+    maxPage: Int
+    productCount: Int
+    history:[History!]!
+  }
+  type cartPaginate{
+    curPage: String
+    maxPage: Int
+    productCount: Int
+    cart:[Cart!]!
+  }
   extend type Query {
     user: User!
-
+    getCartInfo: cartPaginate!
+    getHistoryInfo: historyPaginate!
   }
+ 
   extend type Mutation {
     createUser(name:String!, email: String!, password: String!): Token!
     login(email: String!, password: String!): Token! 
     resetPassword(email:String!): Token!
     newPassword(token:String!,password:String!):Token!
+    updateUser(name:String!,profilePic:String!,contactNumber:String!,country:String!,city:String!,SocialMediaAcc:String!,zipcode:String!): User!
   }
 `;

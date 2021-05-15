@@ -23,7 +23,42 @@ export default {
       const user = await userModel.findById({ _id: me.id }).exec();
       return user;
     },
-    
+    getCartInfo: async (parent, args, { models: { userModel,productModel },me }, info) => {
+      if (!me) {
+        throw new AuthenticationError('You are not authenticated');
+      }
+      const user = await userModel.findById({ _id: me.id }).exec();
+      const cart =user.cart
+      const array = cart.map(item => {
+        return {
+          id:item.id,
+          quantity:item.quantity,
+          date:item.date
+        }
+      })
+     return {curPage:"1",maxPage:1,productCount:1,cart:array}
+    },
+    getHistoryInfo: async (parent, args, { models: { userModel },me }, info) => {
+      if (!me) {
+        throw new AuthenticationError('You are not authenticated');
+      }
+      const user = await userModel.findById({ _id: me.id }).exec();
+      const history =user.history
+      const array = history.map(item => {
+        return {
+          id:item.id,
+          name:item.name,
+          price:item.price,
+          image:item.image,
+          quantity:item.quantity,
+          storeName:item.storeName,
+          storeOwner:item.storeOwner,
+          dateOfPurchase:item.dateOfPurchase,
+        }
+      })
+
+     return {curPage:"1",maxPage:1,productCount:1,history:array}
+    },
     
   },
   Mutation: {
@@ -93,5 +128,24 @@ export default {
        await user.save()
        return {token:"password update success"}
     },
+    
+    updateUser: async (parent, { name,profilePic,contactNumber,country,city,SocialMediaAcc,zipcode }, { models: { userModel },me }, info) => {
+      if (!me) {
+        throw new AuthenticationError('You are not authenticated');
+      }
+      if(!name|| !profilePic|| !contactNumber|| !country|| !city || !SocialMediaAcc || !zipcode)  throw new AuthenticationError('complete the fields')
+      const user=await userModel.findOne({_id: me.id})
+      if(!user)  throw new AuthenticationError('User not Found');
+      user.name = name;
+      user.profilePic = profilePic;
+      user.contactNumber = contactNumber;
+      user.country = country;
+      user.city = city;
+      user.zipcode = zipcode;
+      user.SocialMediaAcc = SocialMediaAcc;
+      await  user.save()
+      return user
+    },
   },
+  
 };
