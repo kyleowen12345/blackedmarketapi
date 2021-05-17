@@ -23,7 +23,7 @@ export default gql`
   }
   type Cart{
     id:String!
-    quantity:String!
+    quantity:Int!
     date:String!
   }
   type History{
@@ -48,17 +48,19 @@ export default gql`
     productCount: Int
     cart:[Cart!]!
   }
+
   extend type Query {
     user: User!
-    getCartInfo: cartPaginate!
-    getHistoryInfo: historyPaginate!
+    getCartInfo(curPage:String!): cartPaginate!
+    getHistoryInfo(curPage:String!): historyPaginate!
   }
- 
-  extend type Mutation {
+   extend type Mutation {
     createUser(name:String!, email: String!, password: String!): Token!
     login(email: String!, password: String!): Token! 
     resetPassword(email:String!): Token!
     newPassword(token:String!,password:String!):Token!
     updateUser(name:String!,profilePic:String!,contactNumber:String!,country:String!,city:String!,SocialMediaAcc:String!,zipcode:String!): User!
+    addToCart(id:ID!,quantity:Int): Token!
+    removeItem(id:ID!):Token!
   }
 `;

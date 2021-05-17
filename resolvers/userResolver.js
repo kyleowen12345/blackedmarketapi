@@ -23,10 +23,11 @@ export default {
       const user = await userModel.findById({ _id: me.id }).exec();
       return user;
     },
-    getCartInfo: async (parent, args, { models: { userModel,productModel },me }, info) => {
+    getCartInfo: async (parent, {curPage="1"}, { models: { userModel },me }, info) => {
       if (!me) {
         throw new AuthenticationError('You are not authenticated');
       }
+      const perPage=5
       const user = await userModel.findById({ _id: me.id }).exec();
       const cart =user.cart
       const array = cart.map(item => {
@@ -36,12 +37,18 @@ export default {
           date:item.date
         }
       })
-     return {curPage:"1",maxPage:1,productCount:1,cart:array}
+      const indexOflastCart=curPage * perPage
+      const indexOfFirstCart=indexOflastCart - perPage
+      const currentCart=array.slice(indexOfFirstCart,indexOflastCart)
+      const maxPage=Math.ceil(array.length / perPage)
+     return {curPage:curPage,maxPage:maxPage,productCount:array.length,cart:currentCart}
     },
-    getHistoryInfo: async (parent, args, { models: { userModel },me }, info) => {
+    getHistoryInfo: async (parent, {curPage="1"}, { models: { userModel },me }, info) => {
       if (!me) {
         throw new AuthenticationError('You are not authenticated');
       }
+  
+      const perPage=5
       const user = await userModel.findById({ _id: me.id }).exec();
       const history =user.history
       const array = history.map(item => {
@@ -56,8 +63,11 @@ export default {
           dateOfPurchase:item.dateOfPurchase,
         }
       })
-
-     return {curPage:"1",maxPage:1,productCount:1,history:array}
+      const indexOflastHistory=curPage * perPage
+      const indexOfFirstHistory=indexOflastHistory - perPage
+      const currentCart=array.slice(indexOfFirstHistory,indexOflastHistory)
+      const maxPage=Math.ceil(array.length / perPage)
+     return {curPage:curPage,maxPage:maxPage,productCount:array.length,history:currentCart}
     },
     
   },
@@ -127,8 +137,7 @@ export default {
 			 user.expireToken = undefined;
        await user.save()
        return {token:"password update success"}
-    },
-    
+    },  
     updateUser: async (parent, { name,profilePic,contactNumber,country,city,SocialMediaAcc,zipcode }, { models: { userModel },me }, info) => {
       if (!me) {
         throw new AuthenticationError('You are not authenticated');
@@ -145,6 +154,54 @@ export default {
       user.SocialMediaAcc = SocialMediaAcc;
       await  user.save()
       return user
+    },
+    addToCart: async (parent, { id,quantity=1 }, { models: { userModel },me }, info) => {
+      if (!me) {
+        throw new AuthenticationError('You are not authenticated');
+      }
+      
+    const userInfo=  await userModel.findOne({_id:me.id})
+        let duplicate = false
+        userInfo.cart.map((item)=>{
+          if (item.id == id) {
+            duplicate = true;
+          }
+        })
+        if(duplicate){
+          userModel.findOneAndUpdate(
+            {_id:me.id,"cart.id":id},
+            {$inc:{"cart.$.quantity": quantity}},
+            {new :true},
+            (err,userInfo)=>{
+              console.log(userInfo.cart)
+              if (err) throw new AuthenticationError({err});
+              
+            }
+          )
+        }else{
+          userModel.findOneAndUpdate(
+           {_id:me.id},
+           {$push:{cart:{id:id,quantity:quantity,date:new Date()}}},
+           {new:true},
+           (err,userInfo)=>{
+            console.log(userInfo.cart)
+            if (err) throw new AuthenticationError({err});
+            
+           }
+          )
+        }
+      return {token:`${id} has been added to cart`}
+    },
+    removeItem: async (parent, {id }, { models: { userModel },me }, info) => {
+      if (!me) {
+        throw new AuthenticationError('You are not authenticated');
+      }
+      await userModel.findOneAndUpdate(
+        {_id:me.id},
+        {"$pull":{"cart":{"id":id}}},
+        {new:true}
+        )
+        return {token:`${id} has been deleted`}
     },
   },
   
