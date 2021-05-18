@@ -1,6 +1,7 @@
 import { gql } from 'apollo-server-express';
 
 export default gql`
+scalar Date
   type User {
     id: ID!
     name: String!
@@ -23,6 +24,8 @@ export default gql`
   }
   type Cart{
     id:String!
+    productName:String!
+    image:String!
     quantity:Int!
     date:String!
   }
@@ -34,7 +37,7 @@ export default gql`
     quantity:String!
     storeName:String!
     storeOwner:String!
-    dateOfPurchase:String!
+    dateOfPurchase:Date!
   }
   type historyPaginate{
     curPage: String
@@ -60,7 +63,7 @@ export default gql`
     resetPassword(email:String!): Token!
     newPassword(token:String!,password:String!):Token!
     updateUser(name:String!,profilePic:String!,contactNumber:String!,country:String!,city:String!,SocialMediaAcc:String!,zipcode:String!): User!
-    addToCart(id:ID!,quantity:Int): Token!
+    addToCart(id:ID!,quantity:Int,productName:String!,image:String!): Token!
     removeItem(id:ID!):Token!
   }
 `;
