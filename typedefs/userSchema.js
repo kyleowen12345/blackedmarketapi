@@ -26,6 +26,7 @@ scalar Date
     id:String!
     productName:String!
     image:String!
+    price:String!
     quantity:Int!
     date:String!
   }
@@ -63,7 +64,7 @@ scalar Date
     resetPassword(email:String!): Token!
     newPassword(token:String!,password:String!):Token!
     updateUser(name:String!,profilePic:String!,contactNumber:String!,country:String!,city:String!,SocialMediaAcc:String!,zipcode:String!): User!
-    addToCart(id:ID!,quantity:Int,productName:String!,image:String!): Token!
+    addToCart(id:ID!,quantity:Int,productName:String!,image:String!,price:String!): Token!
     removeItem(id:ID!):Token!
   }
 `;
