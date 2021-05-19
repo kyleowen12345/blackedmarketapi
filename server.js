@@ -12,6 +12,7 @@ import resolvers from './resolvers/index.js';
 import userModel from './models/userModel.js';
 import storeModel from './models/storeModel.js';
 import productModel from './models/productModel.js'
+import paymentModel from './models/paymentModel.js';
 
 dotenv.config();
 const app = express();
@@ -59,7 +60,8 @@ mongoose.connect(
           models: {
             userModel,
             storeModel,
-            productModel
+            productModel,
+            paymentModel
           },
         };
       }

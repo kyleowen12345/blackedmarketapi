@@ -28,7 +28,7 @@ scalar Date
     image:String!
     price:String!
     quantity:Int!
-    date:String!
+    date:Date!
   }
   type History{
     id:String!

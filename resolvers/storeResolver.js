@@ -24,6 +24,22 @@ export default {
         const store = await storeModel.findById({_id:id}).exec()
         return store
       },
+      getStoreStats: async (parent, {storeId}, { models: { paymentModel },me }, info) => {
+          if (!me) {
+            throw new AuthenticationError('You are not authenticated');
+          }
+       
+          const store = await paymentModel.find({})
+          const result=store.map(i=>i.product)
+          let statSheet=[]
+          result.forEach((info)=>{
+            info.forEach((data)=>{
+              statSheet.push(data)
+            })
+          })
+          const yourStats=statSheet?.filter(i=>i.storeName?.includes(storeId))
+          return yourStats
+        },
   },
 //   Mutation: {
 //     createPost: async (parent, { title, content }, { models: { postsModel }, me }, info) => {

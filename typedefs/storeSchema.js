@@ -13,10 +13,26 @@ export default gql`
     contactNumber:String!
     storeBackgroundImage:String!
   }
-
+  type Buyer{
+    name:String!
+    email:String!
+    profile:String!
+  }
+  type StatSheet{
+    id:String!
+    name:String!
+    price:String!
+    image:String!
+    quantity:String!
+    storeName:String!
+    storeOwner:String!
+    dateOfPurchase:Date!
+    buyer:Buyer!
+  }
   extend type Query {
     storespaginate(curPage:String!): Paginator!
     storeInfo(id:ID!):Store!
+    getStoreStats(storeId:String!): [StatSheet!]!
   }
   type Paginator {
     curPage: String
@@ -24,6 +40,4 @@ export default gql`
     storeCount: Int
     stores: [Store!]!
 }
-
-
 `;
