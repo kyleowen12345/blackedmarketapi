@@ -1,5 +1,5 @@
 import { AuthenticationError } from 'apollo-server-express';
-
+import ASYNC from 'async'
 export default {
   Query: {
     storespaginate: async (parent, {curPage=1}, { models: { storeModel }, me }, info) => {
@@ -41,24 +41,33 @@ export default {
           return yourStats
         },
   },
-//   Mutation: {
-//     createPost: async (parent, { title, content }, { models: { postsModel }, me }, info) => {
-//       if (!me) {
-//         throw new AuthenticationError('You are not authenticated');
-//       }
-//       const post = await postsModel.create({ title, content, author: me.id });
-//       return post;
-//     },
-//     deletePost:async (parent,{id},{models: { postsModel }, me },info)=>{
-//       if (!me) {
-//         throw new AuthenticationError('You are not authenticated');
-        
-//       }
-//       const deletePost=await postsModel.deleteOne({_id:id})
-//       if(deletePost.deletedCount) return{id: id}
-//           else throw new ApolloError(`Failed to delete Post.`);
-//     }
-//   },
+  Mutation: {
+    createStore: async (parent, {storeName, storeAddress, storeDescription,storeType,socialMediaAcc,contactNumber, storeBackgroundImage }, { models: { storeModel,userModel },me }, info) => {
+      if(!me){
+        throw new AuthenticationError('You are not authenticated');
+      }
+    const user=  await userModel.findById({_id:me.id})
+    if (user.Seller===false){
+      throw new AuthenticationError('You are not a Seller');
+    }
+   const takenName= await storeModel.findOne({storeName:storeName})
+   if(takenName){
+    throw new AuthenticationError(`${storeName} is already taken`);
+   }
+   if(storeBackgroundImage){
+    const newStoreWithImage=new storeModel({storeName, storeAddress, storeDescription,storeType,socialMediaAcc,contactNumber,storeBackgroundImage:storeBackgroundImage,sellerName:me.id})
+    await newStoreWithImage.save()
+   }else{
+    const newStore =new storeModel({storeName, storeAddress, storeDescription,storeType,socialMediaAcc,contactNumber,sellerName:me.id})
+    await newStore.save()
+   }
+   
+   
+   
+    return {message:`Created ${storeName}`}
+      
+    },
+  },
   Store: {
     sellerName: async ({ sellerName }, args, { models: { userModel } }, info) => {
       const user = await userModel.findById({ _id: sellerName }).exec();

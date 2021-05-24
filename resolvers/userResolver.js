@@ -37,6 +37,8 @@ export default {
           image:item.image,
           price:item.price,
           quantity:item.quantity,
+          storeName:item.storeName,
+          storeOwner:item.storeOwner,
           date:item.date
         }
       })
@@ -158,7 +160,7 @@ export default {
       await  user.save()
       return user
     },
-    addToCart: async (parent, { id,quantity=1,productName,image,price }, { models: { userModel },me }, info) => {
+    addToCart: async (parent, { id,quantity=1,productName,image,price,storeName,storeOwner }, { models: { userModel },me }, info) => {
       if (!me) {
         throw new AuthenticationError('You are not authenticated');
       }
@@ -183,7 +185,7 @@ export default {
         }else{
           userModel.findOneAndUpdate(
            {_id:me.id},
-           {$push:{cart:{id:id,productName:productName,price:price,image:image,quantity:quantity,date:new Date()}}},
+           {$push:{cart:{id:id,productName:productName,price:price,image:image,quantity:quantity,storeOwner:storeOwner,storeName:storeName,date:new Date()}}},
            {new:true},
            (err,userInfo)=>{
             if (err) throw new AuthenticationError({err});

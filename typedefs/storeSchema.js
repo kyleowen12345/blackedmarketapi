@@ -14,9 +14,7 @@ export default gql`
     storeBackgroundImage:String!
   }
   type Buyer{
-    name:String!
     email:String!
-    profile:String!
   }
   type StatSheet{
     id:String!
@@ -29,15 +27,24 @@ export default gql`
     dateOfPurchase:Date!
     buyer:Buyer!
   }
-  extend type Query {
-    storespaginate(curPage:String!): Paginator!
-    storeInfo(id:ID!):Store!
-    getStoreStats(storeId:String!): [StatSheet!]!
-  }
   type Paginator {
     curPage: String
     maxPage: Int
     storeCount: Int
     stores: [Store!]!
-}
+  }
+  type Message{
+    message:String!
+  }
+ 
+  extend type Query {
+    storespaginate(curPage:String!): Paginator!
+    storeInfo(id:ID!):Store!
+    getStoreStats(storeId:String!): [StatSheet!]!
+  }
+  extend type Mutation {
+   createStore(storeName:String!,storeAddress:String!,storeDescription:String!,storeType:String!,socialMediaAcc:String!,contactNumber:String!,storeBackgroundImage:String):Message!
+  }
+  
+ 
 `;

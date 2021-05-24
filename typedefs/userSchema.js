@@ -36,8 +36,8 @@ scalar Date
     price:String!
     image:String!
     quantity:String!
-    storeName:String!
-    storeOwner:String!
+    storeName:ID!
+    storeOwner:ID!
     dateOfPurchase:Date!
   }
   type historyPaginate{
@@ -64,7 +64,7 @@ scalar Date
     resetPassword(email:String!): Token!
     newPassword(token:String!,password:String!):Token!
     updateUser(name:String!,profilePic:String!,contactNumber:String!,country:String!,city:String!,SocialMediaAcc:String!,zipcode:String!): User!
-    addToCart(id:ID!,quantity:Int,productName:String!,image:String!,price:String!): Token!
+    addToCart(id:ID!,quantity:Int,productName:String!,image:String!,price:String!,storeName:ID!,storeOwner:ID!): Token!
     removeItem(id:ID!):Token!
   }
 `;
