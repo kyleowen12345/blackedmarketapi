@@ -42,7 +42,7 @@ export default {
         },
   },
   Mutation: {
-    createStore: async (parent, {storeName, storeAddress, storeDescription,storeType,socialMediaAcc,contactNumber, storeBackgroundImage }, { models: { storeModel,userModel },me }, info) => {
+    createStore: async (parent, {storeName, storeAddress, storeDescription,storeType,socialMediaAcc,contactNumber }, { models: { storeModel,userModel },me }, info) => {
       if(!me){
         throw new AuthenticationError('You are not authenticated');
       }
@@ -54,19 +54,21 @@ export default {
    if(takenName){
     throw new AuthenticationError(`${storeName} is already taken`);
    }
-   if(storeBackgroundImage){
-    const newStoreWithImage=new storeModel({storeName, storeAddress, storeDescription,storeType,socialMediaAcc,contactNumber,storeBackgroundImage:storeBackgroundImage,sellerName:me.id})
-    await newStoreWithImage.save()
-   }else{
     const newStore =new storeModel({storeName, storeAddress, storeDescription,storeType,socialMediaAcc,contactNumber,sellerName:me.id})
     await newStore.save()
-   }
-   
-   
-   
-    return {message:`Created ${storeName}`}
+    return newStore
       
     },
+    // setStorePhoto: async (parent, {Id,image }, { models: { storeModel,userModel },me }, info) => {
+    //   if(!me){
+    //     throw new AuthenticationError('You are not authenticated');
+    //   }
+    // const store=await storeModel.findById({_id:Id})
+    // store.storeBackgroundImage=image
+    // store.save()
+    // return {message:`Image Uplaoded`}
+      
+    // },
   },
   Store: {
     sellerName: async ({ sellerName }, args, { models: { userModel } }, info) => {

@@ -43,7 +43,7 @@ export default gql`
     getStoreStats(storeId:String!): [StatSheet!]!
   }
   extend type Mutation {
-   createStore(storeName:String!,storeAddress:String!,storeDescription:String!,storeType:String!,socialMediaAcc:String!,contactNumber:String!,storeBackgroundImage:String):Message!
+   createStore(storeName:String!,storeAddress:String!,storeDescription:String!,storeType:String!,socialMediaAcc:String!,contactNumber:String!):Store!
   }
   
  
