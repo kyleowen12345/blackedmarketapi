@@ -41,9 +41,11 @@ export default gql`
     storespaginate(curPage:String!): Paginator!
     storeInfo(id:ID!):Store!
     getStoreStats(storeId:String!): [StatSheet!]!
+    myStores(curPage:String!):Paginator!
   }
   extend type Mutation {
    createStore(storeName:String!,storeAddress:String!,storeDescription:String!,storeType:String!,socialMediaAcc:String!,contactNumber:String!):Store!
+   storeImage(id:ID!,storeBackgroundImage:String!):Message!
   }
   
  

@@ -24,7 +24,7 @@ export default {
         const store = await storeModel.findById({_id:id}).exec()
         return store
       },
-      getStoreStats: async (parent, {storeId}, { models: { paymentModel },me }, info) => {
+    getStoreStats: async (parent, {storeId}, { models: { paymentModel },me }, info) => {
           if (!me) {
             throw new AuthenticationError('You are not authenticated');
           }
@@ -39,6 +39,20 @@ export default {
           })
           const yourStats=statSheet?.filter(i=>i.storeName?.includes(storeId))
           return yourStats
+        },
+    myStores: async (parent, {curPage=1}, { models: { storeModel },me }, info) => {
+          if (!me) {
+            throw new AuthenticationError('You are not authenticated');
+          }
+          const perPage=5
+        const mystores=await storeModel.find({sellerName:me.id}).sort(({'storeName':-1})).skip((curPage-1)* perPage).limit(perPage).exec()
+        const storeCount =await storeModel.find({sellerName:me.id}).countDocuments()
+        return {
+          stores:mystores,
+          curPage:curPage,
+          maxPage:Math.ceil(storeCount / perPage),
+          storeCount:storeCount
+        };
         },
   },
   Mutation: {
@@ -59,16 +73,15 @@ export default {
     return newStore
       
     },
-    // setStorePhoto: async (parent, {Id,image }, { models: { storeModel,userModel },me }, info) => {
-    //   if(!me){
-    //     throw new AuthenticationError('You are not authenticated');
-    //   }
-    // const store=await storeModel.findById({_id:Id})
-    // store.storeBackgroundImage=image
-    // store.save()
-    // return {message:`Image Uplaoded`}
-      
-    // },
+    storeImage: async (parent, {id,storeBackgroundImage }, { models: { storeModel },me }, info) => {
+    if(!me){
+      throw new AuthenticationError('You are not authenticated');
+    }
+    const store=await storeModel.findById({_id:id})
+    store.storeBackgroundImage=storeBackgroundImage
+    store.save()
+    return {message:`Image Uplaoded`}
+    },
   },
   Store: {
     sellerName: async ({ sellerName }, args, { models: { userModel } }, info) => {
