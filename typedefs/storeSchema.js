@@ -36,16 +36,23 @@ export default gql`
   type Message{
     message:String!
   }
+  type StoreStatSheet{
+    store:Store!
+    stats:[StatSheet!]!
+  }
  
   extend type Query {
     storespaginate(curPage:String!): Paginator!
     storeInfo(id:ID!):Store!
-    getStoreStats(storeId:String!): [StatSheet!]!
+    storeInfoUpdate(id:ID!):Store!
+    getStoreStats(storeId:String!): StoreStatSheet!
     myStores(curPage:String!):Paginator!
   }
   extend type Mutation {
    createStore(storeName:String!,storeAddress:String!,storeDescription:String!,storeType:String!,socialMediaAcc:String!,contactNumber:String!):Store!
    storeImage(id:ID!,storeBackgroundImage:String!):Message!
+   deleteStore(id:ID!):Message!
+   updateStore(id:ID!,storeName:String!,storeAddress:String!,storeDescription:String!,storeType:String!,socialMediaAcc:String!,contactNumber:String!):Store!
   }
   
  
