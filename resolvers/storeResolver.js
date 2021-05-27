@@ -16,13 +16,14 @@ export default {
         storeCount:storeCount
       };
     },
-    storeInfo: async (parent, {id}, { models: { storeModel } }, info) => {
+    storeInfo: async (parent, {id}, { models: { storeModel,productModel } }, info) => {
       //   if (!me) {
       //     throw new AuthenticationError('You are not authenticated');
       //   }
      
         const store = await storeModel.findById({_id:id}).exec()
-        return store
+        const storeProducts=await productModel.find({storeName:id}).exec()
+        return {store:store,products:storeProducts}
       },
     storeInfoUpdate: async (parent, {id}, { models: { storeModel },me }, info) => {
           if (!me) {

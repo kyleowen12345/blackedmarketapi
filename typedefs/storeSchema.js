@@ -40,10 +40,13 @@ export default gql`
     store:Store!
     stats:[StatSheet!]!
   }
- 
+  type StoreswithProduct{
+    store:Store!
+    products:[Product!]!
+  }
   extend type Query {
     storespaginate(curPage:String!): Paginator!
-    storeInfo(id:ID!):Store!
+    storeInfo(id:ID!):StoreswithProduct!
     storeInfoUpdate(id:ID!):Store!
     getStoreStats(storeId:String!): StoreStatSheet!
     myStores(curPage:String!):Paginator!
