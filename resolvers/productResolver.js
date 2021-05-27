@@ -33,25 +33,75 @@ export default {
             productCount:productCount
           };
         },
+    productInfoUpdate: async (parent, {id}, { models: { productModel } }, info) => {
+            if (!me) {
+              throw new AuthenticationError('You are not authenticated');
+            }
+            const product = await productModel.findById({_id:id}).exec()
+            return product
+          },
   },
-//   Mutation: {
-//     createPost: async (parent, { title, content }, { models: { postsModel }, me }, info) => {
-//       if (!me) {
-//         throw new AuthenticationError('You are not authenticated');
-//       }
-//       const post = await postsModel.create({ title, content, author: me.id });
-//       return post;
-//     },
-//     deletePost:async (parent,{id},{models: { postsModel }, me },info)=>{
-//       if (!me) {
-//         throw new AuthenticationError('You are not authenticated');
+  Mutation: {
+    createProduct: async (parent, { productName, price,productStocks,description,storeName }, { models: { productModel,userModel  }, me }, info) => {
+      if (!me) {
+        throw new AuthenticationError('You are not authenticated');
+      }
+      const user=  await userModel.findById({_id:me.id})
+      if (user.Seller===false){
+      throw new AuthenticationError('You are not a Seller');
+      }
+      const takenName= await productModel.findOne({productName:productName})
+      if(takenName){
+      throw new AuthenticationError(`${productName} is already taken`);
+      }
+      const newProduct=new productModel({productName,price,productStocks,description,storeName,storeOwner:me.id})
+      await newProduct.save()
+      return newProduct
+    },
+    deleteProduct: async (parent, {id }, { models: { productModel },me }, info) => {
+      if(!me){
+        throw new AuthenticationError('You are not authenticated');
+      }
+      const prohibited= await productModel.findById({_id:id})
+        if(prohibited.storeOwner !=me.id){
+         throw new AuthenticationError(`Your not authorized`);
+        }
+      await productModel.findByIdAndDelete({_id:id})
+      return {message:`Store Deleted`}
+      },
+    updateProduct: async (parent, {id,productName,price, productStocks,description }, { models: { productModel },me }, info) => {
+        if(!me){
+          throw new AuthenticationError('You are not authenticated');
+        }
+    const prohibited= await productModel.findById({_id:id})
+    if(prohibited.storeOwner !=me.id){
+      console.log( typeof prohibited.storeOwner)
+      console.log( typeof me.id)
+      throw new AuthenticationError(`Your not authorized`);
+    }
+      const productupdate =await productModel.findOne({_id:id})
+      productupdate.productName=productName
+		  productupdate.price=price
+		  productupdate.productStocks=productStocks
+		  productupdate.description=description
+		  await productupdate.save()
+      return productupdate
         
-//       }
-//       const deletePost=await postsModel.deleteOne({_id:id})
-//       if(deletePost.deletedCount) return{id: id}
-//           else throw new ApolloError(`Failed to delete Post.`);
-//     }
-//   },
+      },
+    productImage: async (parent, {id,image }, { models: { productModel },me }, info) => {
+        if(!me){
+          throw new AuthenticationError('You are not authenticated');
+        }
+        const prohibited= await productModel.findById({_id:id})
+        if(prohibited.storeOwner !=me.id){
+         throw new AuthenticationError(`Your not authorized`);
+        }
+        const product=await productModel.findById({_id:id})
+        product.image=image
+        product.save()
+        return {message:`Image Uplaoded`}
+        },  
+  },
 Product: {
     storeName: async ({ storeName }, args, { models: { storeModel } }, info) => {
       const store = await storeModel.findById({ _id: storeName }).exec();

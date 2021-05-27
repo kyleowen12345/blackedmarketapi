@@ -14,23 +14,30 @@ export default gql`
     description:String!
     createdAt:String!
   }
-
-  extend type Query {
-    landingpage: Landing!
-    productInfo(id:ID!):Product!
-    productpaginate(curPage:String!): ProductPaginator!
-  }
   type Landing {
     products: [Product!]!
     stores: [Store!]!
 }
-type ProductPaginator {
+  type ProductPaginator {
   curPage: String
   maxPage: Int
   productCount: Int
   products: [Product!]!
 }
 
+extend type Query {
+    landingpage: Landing!
+    productInfo(id:ID!):Product!
+    productInfoUpdate(id:ID!):Product!
+    productpaginate(curPage:String!): ProductPaginator!
+  }
+  
+extend type Mutation{
+  createProduct(productName:String!,price:String!,productStocks:String!,description:String!,storeName:ID!):Product!
+  deleteProduct(id:ID!):Message!
+  updateProduct(id:ID!,productName:String!,price:String!,productStocks:String!,description:String!):Product!
+  productImage(id:ID!,image:String!):Message!
+}
 
 
 `;

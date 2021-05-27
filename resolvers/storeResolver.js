@@ -93,21 +93,26 @@ export default {
     store.save()
     return {message:`Image Uplaoded`}
     },
-    deleteStore: async (parent, {id }, { models: { storeModel },me }, info) => {
+    deleteStore: async (parent, {id }, { models: { storeModel,productModel },me }, info) => {
       if(!me){
         throw new AuthenticationError('You are not authenticated');
       }
+      const prohibited= await storeModel.findById({_id:id})
+        if(prohibited.sellerName !=me.id){
+         throw new AuthenticationError(`Your not authorized`);
+        }
       await storeModel.findByIdAndDelete({_id:id})
+      await productModel.deleteMany({storeName:id})
       return {message:`Store Deleted`}
       },
     updateStore: async (parent, {id,storeName, storeAddress, storeDescription,storeType,socialMediaAcc,contactNumber }, { models: { storeModel },me }, info) => {
         if(!me){
           throw new AuthenticationError('You are not authenticated');
         }
-     const takenName= await storeModel.findOne({storeName:storeName})
-     if(takenName){
-      throw new AuthenticationError(`${storeName} is already taken`);
-     }
+        const prohibited= await storeModel.findById({_id:id})
+        if(prohibited.sellerName !=me.id){
+         throw new AuthenticationError(`Your not authorized`);
+        }
       const storeupdate =await storeModel.findOne({_id:id})
       storeupdate.storeName=storeName
 		  storeupdate.storeAddress=storeAddress
