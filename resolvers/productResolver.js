@@ -33,7 +33,7 @@ export default {
             productCount:productCount
           };
         },
-    productInfoUpdate: async (parent, {id}, { models: { productModel } }, info) => {
+    productInfoUpdate: async (parent, {id}, { models: { productModel },me }, info) => {
             if (!me) {
               throw new AuthenticationError('You are not authenticated');
             }
