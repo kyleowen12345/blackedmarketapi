@@ -17,7 +17,7 @@ router.post('/successBuy',async(req,res)=>{
 		history.push({
 			dateOfPurchase:new Date(),
 			name:item.productName,
-			id: item._id,
+			id: item.id,
 			price: item.price,
 			image:item.image,
 			quantity: item.quantity,

@@ -5,7 +5,7 @@ import mongoose from 'mongoose';
 import helmet from 'helmet'
 import { ApolloServer, AuthenticationError } from 'apollo-server-express';
 import dotenv from "dotenv"
-import ASYNC from 'async'
+
 
 import purchase from './route/purchase.js'
 
