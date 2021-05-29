@@ -29,6 +29,8 @@ scalar Date
     price:String!
     quantity:Int!
     date:Date!
+    storeName:ID!
+    storeOwner:ID!
   }
   type History{
     id:String!
@@ -52,7 +54,8 @@ scalar Date
     productCount: Int
     cart:[Cart!]!
   }
-
+  
+ 
   extend type Query {
     user: User!
     getCartInfo(curPage:String!): cartPaginate!
