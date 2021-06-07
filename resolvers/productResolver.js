@@ -41,7 +41,7 @@ export default {
             return product
           },
     productCategory: async (parent, {category,curPage=1}, { models: { productModel,storeModel },me }, info) => {
-      const perPage=2
+      const perPage=5
       const storeType=await storeModel.find({storeType:category})
       const productsToQuery=storeType.map(i=>i._id)
       const productType=await productModel.find({storeName:productsToQuery}).sort(({'productName':-1})).skip((curPage-1)* perPage).limit(perPage).exec()
@@ -53,17 +53,28 @@ export default {
         productCount:productTypeTotal
       };
     },
-    latestProduct: async (parent, args, { models: { productModel,storeModel },me }, info) => {
+    latestProduct: async (parent, args, { models: { productModel },me }, info) => {
       const products = await productModel.find({}).sort(({'createdAt':-1})).limit(15).exec();
       return products
     },
-    randomQuery: async (parent, args, { models: { productModel,storeModel },me }, info) => {
+    randomQuery: async (parent, args, { models: { productModel },me }, info) => {
       const products = await productModel.aggregate([
         { $sample: { size: 15 } }
     ])
-    console.log(products)
       return products
     },
+    searchProduct: async (parent, {product,curPage=1}, { models: { productModel },me }, info) => {
+      const perPage=5
+      const searchProduct=await productModel.find({productName:new RegExp(product,'i')}).sort(({'productName':-1})).skip((curPage-1)* perPage).limit(perPage).exec()
+      const productSearchTotal=await productModel.find({productName:new RegExp(product,'i')}).countDocuments()
+      return {
+        products:searchProduct,
+        curPage:curPage,
+        maxPage:Math.ceil(productSearchTotal / perPage),
+        productCount:productSearchTotal
+      }
+    },
+    
   },
   Mutation: {
     createProduct: async (parent, { productName, price,productStocks,description,storeName }, { models: { productModel,userModel  }, me }, info) => {

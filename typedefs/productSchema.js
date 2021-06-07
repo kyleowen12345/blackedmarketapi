@@ -13,6 +13,7 @@ export default gql`
     image:String!
     description:String!
     createdAt:String!
+    _id:ID!
   }
   type Landing {
     products: [Product!]!
@@ -32,7 +33,8 @@ extend type Query {
     productpaginate(curPage:String!): ProductPaginator!
     productCategory(category:String!,curPage:String!):ProductPaginator!
     latestProduct:[Product!]!
-    randomQuery:[Product!]!
+    randomQuery:[Product!]! 
+    searchProduct(product:String!,curPage:String):ProductPaginator!
   }
   
 extend type Mutation{
@@ -40,6 +42,7 @@ extend type Mutation{
   deleteProduct(id:ID!):Message!
   updateProduct(id:ID!,productName:String!,price:String!,productStocks:String!,description:String!):Product!
   productImage(id:ID!,image:String!):Message!
+  
 }
 
 
