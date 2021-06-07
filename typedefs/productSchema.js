@@ -30,6 +30,9 @@ extend type Query {
     productInfo(id:ID!):Product!
     productInfoUpdate(id:ID!):Product!
     productpaginate(curPage:String!): ProductPaginator!
+    productCategory(category:String!,curPage:String!):ProductPaginator!
+    latestProduct:[Product!]!
+    randomQuery:[Product!]!
   }
   
 extend type Mutation{
