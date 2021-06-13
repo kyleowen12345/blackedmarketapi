@@ -7,7 +7,7 @@ export default {
     //     throw new AuthenticationError('You are not authenticated');
     //   }
       const stores=await storeModel.find({}).sort(({'storeName':-1})).limit(15).exec();
-      const products = await productModel.find({}).sort(({'productName':-1})).limit(15).exec();
+      const products = await productModel.find({}).sort(({'productName':1})).limit(15).exec();
      
       return {stores,products};
     },
@@ -58,10 +58,9 @@ export default {
       return products
     },
     randomQuery: async (parent, args, { models: { productModel },me }, info) => {
-      const products = await productModel.aggregate([
-        { $sample: { size: 15 } }
-    ])
+      const products = await productModel.find({}).sort(({'createdAt':1})).limit(6).exec();
       return products
+      
     },
     searchProduct: async (parent, {product,curPage=1}, { models: { productModel },me }, info) => {
       const perPage=5
@@ -77,6 +76,7 @@ export default {
     
   },
   Mutation: {
+    
     createProduct: async (parent, { productName, price,productStocks,description,storeName }, { models: { productModel,userModel  }, me }, info) => {
       if (!me) {
         throw new AuthenticationError('You are not authenticated');
