@@ -8,8 +8,9 @@ export default {
     //   }
       const stores=await storeModel.find({}).sort(({'storeName':-1})).limit(15).exec();
       const products = await productModel.find({}).sort(({'productName':1})).limit(15).exec();
-     
-      return {stores,products};
+      const deals = await productModel.find({}).sort(({'createdAt':1})).limit(6).exec();
+      
+      return {stores,products,deals};
     },
     productInfo: async (parent, {id}, { models: { productModel } }, info) => {
       //   if (!me) {
@@ -56,11 +57,6 @@ export default {
     latestProduct: async (parent, args, { models: { productModel },me }, info) => {
       const products = await productModel.find({}).sort(({'createdAt':-1})).limit(15).exec();
       return products
-    },
-    randomQuery: async (parent, args, { models: { productModel },me }, info) => {
-      const products = await productModel.find({}).sort(({'createdAt':1})).limit(6).exec();
-      return products
-      
     },
     searchProduct: async (parent, {product,curPage=1}, { models: { productModel },me }, info) => {
       const perPage=5

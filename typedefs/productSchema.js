@@ -18,6 +18,7 @@ export default gql`
   type Landing {
     products: [Product!]!
     stores: [Store!]!
+    deals:[Product!]!
 }
   type ProductPaginator {
   curPage: String
@@ -33,7 +34,7 @@ extend type Query {
     productpaginate(curPage:String!): ProductPaginator!
     productCategory(category:String!,curPage:String!):ProductPaginator!
     latestProduct:[Product!]!
-    randomQuery:[Product!]! 
+    
     searchProduct(product:String!,curPage:String):ProductPaginator!
   }
   
