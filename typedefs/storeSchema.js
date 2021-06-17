@@ -9,7 +9,7 @@ export default gql`
     storeType: String!
     sellerName:User!
     socialMediaAcc:String!
-    createdAt:String!
+    createdAt:Date!
     contactNumber:String!
     storeBackgroundImage:String!
   }

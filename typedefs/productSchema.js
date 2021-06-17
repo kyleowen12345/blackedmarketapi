@@ -26,10 +26,15 @@ export default gql`
   productCount: Int
   products: [Product!]!
 }
+type ProductDetail {
+  product: Product!
+  relatedProducts:String!
+}
+
 
 extend type Query {
     landingpage: Landing!
-    productInfo(id:ID!):Product!
+    productInfo(id:ID!):ProductDetail!
     productInfoUpdate(id:ID!):Product!
     productpaginate(curPage:String!): ProductPaginator!
     productCategory(category:String!,curPage:String!):ProductPaginator!

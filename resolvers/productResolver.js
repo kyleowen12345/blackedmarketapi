@@ -18,7 +18,12 @@ export default {
       //   }
      
         const product = await productModel.findById({_id:id}).exec()
-        return product
+    
+        const relatedproducts= await productModel.find({storeName:product.storeName}).exec()
+        return {
+          product,
+          relatedProducts: relatedproducts.length
+        }
       },
     productpaginate: async (parent, {curPage=1}, { models: { productModel }, me }, info) => {
         //   if (!me) {
