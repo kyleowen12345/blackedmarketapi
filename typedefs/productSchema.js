@@ -12,7 +12,7 @@ export default gql`
     sold:String!
     image:String!
     description:String!
-    createdAt:String!
+    createdAt:Date!
     _id:ID!
   }
   type Landing {

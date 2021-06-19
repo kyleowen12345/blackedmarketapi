@@ -16,7 +16,7 @@ scalar Date
     resetToken:String
     expireToken:String
     Seller:String
-    createdAt:String
+    createdAt:Date
     cart:Product!
   }
   type Token {
