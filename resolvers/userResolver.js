@@ -193,7 +193,7 @@ export default {
            }
           )
         }
-      return {token:`${id} has been added to cart`}
+      return {id,quantity,productName,image,price,storeName,storeOwner}
     },
     removeItem: async (parent, {id }, { models: { userModel },me }, info) => {
       if (!me) {

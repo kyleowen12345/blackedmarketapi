@@ -22,7 +22,7 @@ router.post('/successBuy',async(req,res)=>{
 			image:item.image,
 			quantity: item.quantity,
 			storeName:item.storeName,
-			storeOwner:item.storeOwner,
+			storeOwner:item.storeOwner ,
 			paymentId: req.body.paymentData.paymentID,
 			buyer:{id:me.id,email:me.email}
 		})
@@ -51,7 +51,70 @@ router.post('/successBuy',async(req,res)=>{
                         { _id: item.id },
                         {
                             $inc: {
-                                "sold":item.quantity
+                                "sold":item.quantity,
+                                "productStocks":-item.quantity
+                            }
+                        },
+                        { new: false },
+                        callback
+                    )
+                }, (err) => {
+                    if (err) return res.json({ success: false, err })
+                    res.status(200).json({
+                        success: true,
+                        cart: user.cart,
+                        cartDetail: []
+                    })
+                })
+
+            })
+        }
+    )
+})
+router.post('/successBuy/singlePurchase',async(req,res)=>{
+	let history=[]
+	let transactionData={}
+    const me = await getUser(req);
+	req.body.cartDetail.forEach((item)=>{
+		history.push({
+			dateOfPurchase:new Date(),
+			name:item.productName,
+			id: item.id,
+			price: item.price,
+			image:item.image,
+			quantity: item.quantity,
+			storeName:item.storeName,
+			storeOwner:item.storeOwner ,
+			paymentId: req.body.paymentData.paymentID,
+			buyer:{id:me.id,email:me.email}
+		})
+	})
+
+	transactionData.data=req.body.paymentData;
+	transactionData.product=history;
+	 
+	userModel.findOneAndUpdate(
+        { _id: me.id },
+        { $push: { history: history } },
+        { new: true },
+        (err, user) => {
+            if (err) return res.json({ success: false, err });
+            const payment = new paymentModel(transactionData)
+            payment.save((err, doc) => {
+				if (err) return res.json({ success: false, err });
+				
+				let products = [];
+                doc.product.forEach(item => {
+                    products.push({ id: item.id, quantity: item.quantity })
+                })
+
+                ASYNC.eachSeries(products, (item, callback) => {
+                    productModel.updateMany(
+                        { _id: item.id },
+                        {
+                            $inc: {
+                                "sold":item.quantity,
+                                "productStocks":-item.quantity
                             }
                         },
                         { new: false },
