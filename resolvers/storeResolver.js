@@ -16,14 +16,18 @@ export default {
         storeCount:storeCount
       };
     },
-    storeInfo: async (parent, {id}, { models: { storeModel,productModel } }, info) => {
-      //   if (!me) {
-      //     throw new AuthenticationError('You are not authenticated');
-      //   }
-     
+    storeInfo: async (parent, {id}, { models: { storeModel,productModel },me }, info) => {
         const store = await storeModel.findById({_id:id}).exec()
+        let follower= false
+        if(me){
+          store.followers.map((item)=>{
+            if (item.id == me.id) {
+              follower = true;
+            }
+          })
+        }
         const storeProducts=await productModel.find({storeName:id}).limit(10).exec()
-        return {store:store,products:storeProducts}
+        return {store:store,products:storeProducts,isUserAFollower:follower}
       },
     storeInfoUpdate: async (parent, {id}, { models: { storeModel },me }, info) => {
           if (!me) {

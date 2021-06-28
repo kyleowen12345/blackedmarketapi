@@ -43,6 +43,7 @@ export default gql`
   type StoreswithProduct{
     store:Store!
     products:[Product!]!
+    isUserAFollower:Boolean
   }
   type StoreProducts{
     products:[Product!]!
