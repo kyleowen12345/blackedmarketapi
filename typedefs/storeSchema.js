@@ -44,12 +44,19 @@ export default gql`
     store:Store!
     products:[Product!]!
   }
+  type StoreProducts{
+    products:[Product!]!
+    curPage: String!
+    maxPage: Int
+    productCount: Int
+  }
   extend type Query {
     storespaginate(curPage:String!): Paginator!
     storeInfo(id:ID!):StoreswithProduct!
     storeInfoUpdate(id:ID!):Store!
     getStoreStats(storeId:String!): StoreStatSheet!
     myStores(curPage:String!):Paginator!
+    storeProducts(storeId:String!,curPage:String!,sortOrder:String!):StoreProducts!
   }
   extend type Mutation {
    createStore(storeName:String!,storeAddress:String!,storeDescription:String!,storeType:String!,socialMediaAcc:String!,contactNumber:String!):Store!

@@ -66,6 +66,17 @@ export default {
           storeCount:storeCount
         };
         },
+    storeProducts: async (parent, {storeId,curPage,sortOrder}, { models: { storeModel,productModel },me }, info) => {
+      const perPage=15
+      const storeProducts=await productModel.find({storeName:storeId}).sort(({[sortOrder]:-1})).skip((curPage-1)*perPage).limit(perPage).exec()
+      const productCount=await productModel.find({storeName:storeId}).countDocuments()
+      return {
+        products:storeProducts,
+        curPage:curPage,
+        maxPage:Math.ceil(productCount / perPage),
+        productCount:productCount
+      }
+        },    
   },
   Mutation: {
     createStore: async (parent, {storeName, storeAddress, storeDescription,storeType,socialMediaAcc,contactNumber }, { models: { storeModel,userModel },me }, info) => {
