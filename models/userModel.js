@@ -62,6 +62,10 @@ const User = mongoose.model(
 		history:{
 			type:Array,
 			default:[]
+		},
+		following:{
+			type:Array,
+			default:[]
 		}
 	})
 );

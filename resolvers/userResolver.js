@@ -206,6 +206,47 @@ export default {
         )
         return {token:`${id} has been deleted`}
     },
+    followStore: async (parent, {id,storeName,storeBackgroundImage,storeType }, { models: { userModel,storeModel },me }, info) => {
+      if (!me) {
+        throw new AuthenticationError('You are not authenticated');
+      }
+      const userInfo=  await userModel.findOne({_id:me.id})
+      const storeInfo= await storeModel.findOne({_id:id})
+      let duplicate = false
+      userInfo.following.map((item)=>{
+        if (item.id == id) {
+          duplicate = true;
+        }
+      })
+      storeInfo.followers.map((item)=>{
+        if (item.id == me.id) {
+          duplicate = true;
+        }
+      })
+      if(duplicate){
+        throw new AuthenticationError('You already follow this');
+      }else{
+        userModel.findOneAndUpdate(
+         {_id:me.id},
+         {$push:{following:{id:id,storeName:storeName,storeBackgroundImage:storeBackgroundImage,storeType:storeType,date:new Date()}}},
+         {new:true},
+         (err,userInfo)=>{
+          if (err) throw new AuthenticationError({err});
+          
+         }
+        )
+        storeModel.findOneAndUpdate(
+          {_id:id},
+          {$push:{followers:{id:me.id,email:me.email,name:me.name,profilePic:me.profilePic,date:new Date()}}},
+          {new:true},
+          (err,storeInfo)=>{
+           if (err) throw new AuthenticationError({err});
+           
+          }
+         )
+      }
+    return {id,storeName,storeBackgroundImage,storeType}
+    },
   },
   
 };

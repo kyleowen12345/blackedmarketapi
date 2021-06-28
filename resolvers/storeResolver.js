@@ -22,7 +22,7 @@ export default {
       //   }
      
         const store = await storeModel.findById({_id:id}).exec()
-        const storeProducts=await productModel.find({storeName:id}).exec()
+        const storeProducts=await productModel.find({storeName:id}).limit(10).exec()
         return {store:store,products:storeProducts}
       },
     storeInfoUpdate: async (parent, {id}, { models: { storeModel },me }, info) => {

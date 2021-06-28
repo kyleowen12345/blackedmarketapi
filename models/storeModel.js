@@ -55,6 +55,10 @@ const StoreModel = new mongoose.Schema({
 		type: Array,
 		default: []
 	},
+	followers:{
+		type:Array,
+		default:[]
+	}
 	})
 	StoreModel.index({storeName:'text'})
 
