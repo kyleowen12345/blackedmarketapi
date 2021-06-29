@@ -70,5 +70,6 @@ scalar Date
     addToCart(id:ID!,quantity:Int,productName:String!,image:String!,price:String!,storeName:ID!,storeOwner:ID!): Cart!
     removeItem(id:ID!):Token!
     followStore(id:ID!,storeName:String!,storeBackgroundImage:String!,storeType:String!):Store!
+    unfollowStore(id:ID!):Token!
   }
 `;

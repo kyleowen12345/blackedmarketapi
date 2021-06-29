@@ -247,6 +247,22 @@ export default {
       }
     return {id,storeName,storeBackgroundImage,storeType}
     },
+    unfollowStore: async (parent, {id }, { models: { userModel,storeModel },me }, info) => {
+      if (!me) {
+        throw new AuthenticationError('You are not authenticated');
+      }
+      await userModel.findOneAndUpdate(
+        {_id:me.id},
+        {"$pull":{"following":{"id":id}}},
+        {new:true}
+        )
+      await storeModel.findOneAndUpdate(
+          {_id:id},
+          {"$pull":{"followers":{"id":me.id}}},
+          {new:true}
+          )
+        return {token:`Unfollowed Successfully`}
+    },
   },
   
 };
