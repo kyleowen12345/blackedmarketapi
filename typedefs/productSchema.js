@@ -7,7 +7,7 @@ export default gql`
     storeOwner: User!
     productName:String!
     Rating: String!
-    price:String!
+    price:Int!
     productStocks:String!
     sold:String!
     image:String!
