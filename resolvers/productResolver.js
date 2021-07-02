@@ -25,12 +25,12 @@ export default {
           relatedProducts: relatedproducts.length
         }
       },
-    productpaginate: async (parent, {curPage=1}, { models: { productModel }, me }, info) => {
+    productpaginate: async (parent, {curPage=1,sortOrder='productName'}, { models: { productModel }, me }, info) => {
         //   if (!me) {
         //     throw new AuthenticationError('You are not authenticated');
         //   }
-        const perPage=4
-          const products = await productModel.find({}).sort(({'productName':-1})).skip((curPage-1)* perPage).limit(perPage).exec();
+        const perPage=15
+          const products = await productModel.find({}).sort(({[sortOrder]:-1})).skip((curPage-1)* perPage).limit(perPage).exec();
           const productCount =await productModel.find().countDocuments()
           return {
             products,

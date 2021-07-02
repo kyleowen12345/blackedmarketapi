@@ -53,7 +53,7 @@ export default gql`
     productCount: Int
   }
   extend type Query {
-    storespaginate(curPage:String!): Paginator!
+    storespaginate(curPage:String!,sortOrder:String!): Paginator!
     storeInfo(id:ID!):StoreswithProduct!
     storeInfoUpdate(id:ID!):Store!
     getStoreStats(storeId:String!): StoreStatSheet!

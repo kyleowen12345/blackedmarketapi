@@ -36,10 +36,9 @@ extend type Query {
     landingpage: Landing!
     productInfo(id:ID!):ProductDetail!
     productInfoUpdate(id:ID!):Product!
-    productpaginate(curPage:String!): ProductPaginator!
+    productpaginate(curPage:String!,sortOrder:String!): ProductPaginator!
     productCategory(category:String!,curPage:String!):ProductPaginator!
     latestProduct:[Product!]!
-    
     searchProduct(product:String!,curPage:String):ProductPaginator!
   }
   
