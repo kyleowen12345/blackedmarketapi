@@ -82,7 +82,7 @@ export default {
       if(!email) throw new AuthenticationError('Please create a email')
       if(!password) throw new AuthenticationError('Please create a password')
       const savedUser=await userModel.findOne({email:email})
-      if(savedUser) throw new AuthenticationError('User Already exist')
+      if(savedUser) throw new AuthenticationError('Email Already exist')
       const hashedPassword=await bcrypt.hash(password,12)
       const user = await userModel.create({name, email, password:hashedPassword });
       const token = jwt.sign({ id: user.id,email:user.email,name:user.name,profilePic:user.profilePic }, 'riddlemethis', { expiresIn: '24h'  });
