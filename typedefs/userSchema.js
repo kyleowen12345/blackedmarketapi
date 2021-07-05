@@ -15,7 +15,7 @@ scalar Date
     zipcode:String
     resetToken:String
     expireToken:String
-    Seller:String
+    Seller:Boolean
     createdAt:Date
     cart:Product!
   }
@@ -71,5 +71,6 @@ scalar Date
     removeItem(id:ID!):Token!
     followStore(id:ID!,storeName:String!,storeBackgroundImage:String!,storeType:String!):Store!
     unfollowStore(id:ID!):Token!
+    seller:User!
   }
 `;

@@ -263,6 +263,16 @@ export default {
           )
         return {token:`Unfollowed Successfully`}
     },
+    seller: async (parent, args, { models: { userModel },me }, info) => {
+      if (!me) {
+        throw new AuthenticationError('You are not authenticated');
+      }
+      await userModel.findOneAndUpdate(
+        {_id:me.id},
+        {Seller:true},
+        {new:true}
+        )
+    },
   },
   
 };
