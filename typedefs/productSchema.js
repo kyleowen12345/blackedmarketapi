@@ -37,9 +37,9 @@ extend type Query {
     productInfo(id:ID!):ProductDetail!
     productInfoUpdate(id:ID!):Product!
     productpaginate(curPage:String!,sortOrder:String!): ProductPaginator!
-    productCategory(category:String!,curPage:String!):ProductPaginator!
+    productCategory(category:String!,curPage:String!,sortOrder:String!):ProductPaginator!
     latestProduct:[Product!]!
-    searchProduct(product:String!,curPage:String):ProductPaginator!
+    searchProduct(product:String!,curPage:String,sortOrder:String!):ProductPaginator!
   }
   
 extend type Mutation{

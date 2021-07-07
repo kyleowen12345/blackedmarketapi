@@ -8,7 +8,7 @@ export default {
     //   }
       const stores=await storeModel.find({}).sort(({'storeName':-1})).limit(15).exec();
       const products = await productModel.find({}).sort(({'productName':1})).limit(15).exec();
-      const deals = await productModel.find({}).sort(({'createdAt':1})).limit(6).exec();
+      const deals = await productModel.find({}).sort(({'sold':-1})).limit(10).exec();
       
       return {stores,products,deals};
     },
@@ -46,11 +46,11 @@ export default {
             const product = await productModel.findById({_id:id}).exec()
             return product
           },
-    productCategory: async (parent, {category,curPage=1}, { models: { productModel,storeModel },me }, info) => {
+    productCategory: async (parent, {category,curPage=1,sortOrder}, { models: { productModel,storeModel },me }, info) => {
       const perPage=5
       const storeType=await storeModel.find({storeType:category})
       const productsToQuery=storeType.map(i=>i._id)
-      const productType=await productModel.find({storeName:productsToQuery}).sort(({'productName':-1})).skip((curPage-1)* perPage).limit(perPage).exec()
+      const productType=await productModel.find({storeName:productsToQuery}).sort(({[sortOrder]:-1})).skip((curPage-1)* perPage).limit(perPage).exec()
       const productTypeTotal=await productModel.find({storeName:productsToQuery}).countDocuments()
       return {
         products:productType,
@@ -63,9 +63,9 @@ export default {
       const products = await productModel.find({}).sort(({'createdAt':-1})).limit(15).exec();
       return products
     },
-    searchProduct: async (parent, {product,curPage=1}, { models: { productModel },me }, info) => {
+    searchProduct: async (parent, {product,curPage=1,sortOrder}, { models: { productModel },me }, info) => {
       const perPage=5
-      const searchProduct=await productModel.find({productName:new RegExp(product,'i')}).sort(({'productName':-1})).skip((curPage-1)* perPage).limit(perPage).exec()
+      const searchProduct=await productModel.find({productName:new RegExp(product,'i')}).sort(({[sortOrder]:-1})).skip((curPage-1)* perPage).limit(perPage).exec()
       const productSearchTotal=await productModel.find({productName:new RegExp(product,'i')}).countDocuments()
       return {
         products:searchProduct,
