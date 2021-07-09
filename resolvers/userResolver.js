@@ -143,15 +143,14 @@ export default {
        await user.save()
        return {token:"password update success"}
     },  
-    updateUser: async (parent, { name,profilePic,contactNumber,country,city,SocialMediaAcc,zipcode }, { models: { userModel },me }, info) => {
+    updateUser: async (parent, { name,email,contactNumber,country,city,SocialMediaAcc,zipcode }, { models: { userModel },me }, info) => {
       if (!me) {
         throw new AuthenticationError('You are not authenticated');
       }
-      if(!name|| !profilePic|| !contactNumber|| !country|| !city || !SocialMediaAcc || !zipcode)  throw new AuthenticationError('complete the fields')
       const user=await userModel.findOne({_id: me.id})
       if(!user)  throw new AuthenticationError('User not Found');
       user.name = name;
-      user.profilePic = profilePic;
+      user.email = email;
       user.contactNumber = contactNumber;
       user.country = country;
       user.city = city;
@@ -159,6 +158,16 @@ export default {
       user.SocialMediaAcc = SocialMediaAcc;
       await  user.save()
       return user
+    },
+    confirmUser: async (parent, {password }, { models: { userModel },me }, info) => {
+      if(!me) throw new AuthenticationError('You are not authenticated')
+      const confirmedUser=await userModel.findOne({_id:me.id})
+      const matchPasswords = bcrypt.compareSync(password, confirmedUser.password);
+      if (!matchPasswords) {
+        throw new AuthenticationError('Invalid credentials');
+      }
+     return {token:"You are now confirmed"}
+      
     },
     addToCart: async (parent, { id,quantity=1,productName,image,price,storeName,storeOwner }, { models: { userModel },me }, info) => {
       if (!me) {

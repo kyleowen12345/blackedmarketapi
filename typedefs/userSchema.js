@@ -66,7 +66,8 @@ scalar Date
     login(email: String!, password: String!): Token! 
     resetPassword(email:String!): Token!
     newPassword(token:String!,password:String!):Token!
-    updateUser(name:String!,profilePic:String!,contactNumber:String!,country:String!,city:String!,SocialMediaAcc:String!,zipcode:String!): User!
+    updateUser(name:String!,email:String!,contactNumber:String!,country:String!,city:String!,SocialMediaAcc:String!,zipcode:String!): User!
+    confirmUser(password:String!):Token!
     addToCart(id:ID!,quantity:Int,productName:String!,image:String!,price:String!,storeName:ID!,storeOwner:ID!): Cart!
     removeItem(id:ID!):Token!
     followStore(id:ID!,storeName:String!,storeBackgroundImage:String!,storeType:String!):Store!
