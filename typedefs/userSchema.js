@@ -54,6 +54,10 @@ scalar Date
     productCount: Int
     cart:[Cart!]!
   }
+  type UpdateProfile{
+      user:User!
+      token:String!
+  }
   
  
   extend type Query {
@@ -66,7 +70,8 @@ scalar Date
     login(email: String!, password: String!): Token! 
     resetPassword(email:String!): Token!
     newPassword(token:String!,password:String!):Token!
-    updateUser(name:String!,email:String!,contactNumber:String!,country:String!,city:String!,SocialMediaAcc:String!,zipcode:String!): User!
+    updateUser(name:String!,email:String!,contactNumber:String!,country:String!,city:String!,SocialMediaAcc:String!,zipcode:String!): UpdateProfile!
+    updateUserImage(profilePic:String!):UpdateProfile!
     confirmUser(password:String!):Token!
     addToCart(id:ID!,quantity:Int,productName:String!,image:String!,price:String!,storeName:ID!,storeOwner:ID!): Cart!
     removeItem(id:ID!):Token!
