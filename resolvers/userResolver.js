@@ -157,8 +157,7 @@ export default {
       user.zipcode = zipcode;
       user.SocialMediaAcc = SocialMediaAcc;
       await  user.save()
-      const token = jwt.sign({ id: user.id,email:user.email,name:user.name,profilePic:user.profilePic }, 'riddlemethis', { expiresIn: '24h'  });
-      return {user:user,token:token}
+      return user
     },
     updateUserImage: async (parent, {profilePic }, { models: { userModel },me }, info) => {
       if(!me){
@@ -167,8 +166,8 @@ export default {
       const user=await userModel.findById({_id:me.id})
       user.profilePic=profilePic
       user.save()
-      const token = jwt.sign({ id: user.id,email:user.email,name:user.name,profilePic:user.profilePic }, 'riddlemethis', { expiresIn: '24h'  });
-      return {user:user,token:token}
+      
+      return user
       },
     confirmUser: async (parent, {password }, { models: { userModel },me }, info) => {
       if(!me) throw new AuthenticationError('You are not authenticated')
