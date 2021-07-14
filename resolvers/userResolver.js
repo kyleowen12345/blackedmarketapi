@@ -48,7 +48,7 @@ export default {
       const maxPage=Math.ceil(array.length / perPage)
      return {curPage:curPage,maxPage:maxPage,productCount:array.length,cart:currentCart}
     },
-    getHistoryInfo: async (parent, {curPage="1"}, { models: { userModel },me }, info) => {
+    getHistoryInfo: async (parent, {curPage="1",keyword}, { models: { userModel },me }, info) => {
       if (!me) {
         throw new AuthenticationError('You are not authenticated');
       }
@@ -56,7 +56,7 @@ export default {
       const perPage=5
       const user = await userModel.findById({ _id: me.id }).exec();
       const history =user.history
-      const array = history.map(item => {
+      const array = keyword ? history.filter(key=>key.name.includes(keyword)).reverse().map(item => {
         return {
           id:item.id,
           name:item.name,
@@ -68,6 +68,20 @@ export default {
           dateOfPurchase:item.dateOfPurchase,
         }
       })
+      :
+      history.reverse().map(item => {
+        return {
+          id:item.id,
+          name:item.name,
+          price:item.price,
+          image:item.image,
+          quantity:item.quantity,
+          storeName:item.storeName,
+          storeOwner:item.storeOwner,
+          dateOfPurchase:item.dateOfPurchase,
+        }
+      })
+
       const indexOflastHistory=curPage * perPage
       const indexOfFirstHistory=indexOflastHistory - perPage
       const currentCart=array.slice(indexOfFirstHistory,indexOflastHistory)

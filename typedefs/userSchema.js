@@ -63,7 +63,7 @@ scalar Date
   extend type Query {
     user: User!
     getCartInfo(curPage:String!): cartPaginate!
-    getHistoryInfo(curPage:String!): historyPaginate!
+    getHistoryInfo(curPage:String!,keyword:String): historyPaginate!
   }
    extend type Mutation {
     createUser(name:String!, email: String!, password: String!): Token!
