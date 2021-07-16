@@ -13,6 +13,7 @@ export default gql`
     contactNumber:String!
     storeBackgroundImage:String!
     followers:[User!]!
+    date:Date!
   }
   type Buyer{
     email:String!

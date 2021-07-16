@@ -54,6 +54,12 @@ scalar Date
     productCount: Int
     cart:[Cart!]!
   }
+  type followPaginate{
+    curPage: String
+    maxPage: Int
+    followCount: Int
+    follow:[Store!]!
+  }
   type UpdateProfile{
       user:User!
       token:String!
@@ -64,6 +70,7 @@ scalar Date
     user: User!
     getCartInfo(curPage:String!): cartPaginate!
     getHistoryInfo(curPage:String!,keyword:String): historyPaginate!
+    getFollowingStore(curPage:String!,keyword:String):followPaginate!
   }
    extend type Mutation {
     createUser(name:String!, email: String!, password: String!): Token!

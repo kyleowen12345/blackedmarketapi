@@ -6,6 +6,7 @@ import nodemailer from "nodemailer";
 import sendgridTransport from "nodemailer-sendgrid-transport";
 import { AuthenticationError } from 'apollo-server-express';
 import {resetpassword} from "../emailtemplates/index.js"
+import ASYNC from 'async'
 dotenv.config();
 const transporter = nodemailer.createTransport(
 	sendgridTransport({
@@ -84,9 +85,43 @@ export default {
 
       const indexOflastHistory=curPage * perPage
       const indexOfFirstHistory=indexOflastHistory - perPage
-      const currentCart=array.slice(indexOfFirstHistory,indexOflastHistory)
+      const currentHistory=array.slice(indexOfFirstHistory,indexOflastHistory)
       const maxPage=Math.ceil(array.length / perPage)
-     return {curPage:curPage,maxPage:maxPage,productCount:array.length,history:currentCart}
+     return {curPage:curPage,maxPage:maxPage,productCount:array.length,history:currentHistory}
+    },
+    getFollowingStore: async (parent, {curPage="1",keyword}, { models: { userModel,storeModel },me }, info) => {
+      if (!me) {
+        throw new AuthenticationError('You are not authenticated');
+      }
+  
+      const perPage=5
+      const user = await userModel.findById({ _id: me.id }).exec();
+      const following =user.following
+      const array = keyword ? following.filter(key=>key.storeName.includes(keyword)).reverse().map(item => {
+        return {
+          id:item.id,
+          storeName:item.storeName,
+          storeBackgroundImage:item.storeBackgroundImage,
+          storeType:item.storeType,
+          date:item.date,
+        }
+      })
+      :
+      following.reverse().map(item => {
+        return {
+          id:item.id,
+          storeName:item.storeName,
+          storeBackgroundImage:item.storeBackgroundImage,
+          storeType:item.storeType,
+          date:item.date,
+        }
+      })
+     const stores=await storeModel.find({_id:{$in:array?.map(i=>i.id)}})
+      const indexOflastFollowing=curPage * perPage
+      const indexOfFirstFollowing=indexOflastFollowing - perPage
+      const currentFollow=stores.slice(indexOfFirstFollowing,indexOflastFollowing)
+      const maxPage=Math.ceil(stores.length / perPage)
+     return {curPage:curPage,maxPage:maxPage,followCount:array.length,follow:currentFollow}
     },
     
   },
