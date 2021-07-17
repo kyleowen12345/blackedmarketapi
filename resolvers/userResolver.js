@@ -116,7 +116,7 @@ export default {
           date:item.date,
         }
       })
-     const stores=await storeModel.find({_id:{$in:array?.map(i=>i.id)}})
+     const stores=await storeModel.find({_id:{$in:array?.map(i=>i.id)}}).sort(({'storeName':1}))
       const indexOflastFollowing=curPage * perPage
       const indexOfFirstFollowing=indexOflastFollowing - perPage
       const currentFollow=stores.slice(indexOfFirstFollowing,indexOflastFollowing)
