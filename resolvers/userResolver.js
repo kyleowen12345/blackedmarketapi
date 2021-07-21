@@ -24,14 +24,14 @@ export default {
       const user = await userModel.findById({ _id: me.id }).exec();
       return user;
     },
-    getCartInfo: async (parent, {curPage="1"}, { models: { userModel },me }, info) => {
+    getCartInfo: async (parent, {curPage="1"}, { models: { userModel,productModel },me }, info) => {
       if (!me) {
         throw new AuthenticationError('You are not authenticated');
       }
       const perPage=5
       const user = await userModel.findById({ _id: me.id }).exec();
       const cart =user.cart
-      const array = cart.map(item => {
+      const array = cart.reverse().map(item => {
         return {
           id:item.id,
           productName:item.productName,
@@ -262,6 +262,17 @@ export default {
           )
         }
       return {id,quantity,productName,image,price,storeName,storeOwner}
+    },
+    setQuantity: async (parent, { id,value}, { models: { userModel },me }, info) => {
+      if (!me) {
+        throw new AuthenticationError('You are not authenticated');
+      }
+      await userModel.findOneAndUpdate(
+        {_id:me.id,"cart.id":id},
+        {"$set":{"cart.$.quantity":value}},
+        {new:true}
+        )
+        return {token:`${id} quantity has been set`}
     },
     removeItem: async (parent, {id }, { models: { userModel },me }, info) => {
       if (!me) {
