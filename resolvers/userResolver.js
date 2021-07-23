@@ -4,7 +4,7 @@ import dotenv from "dotenv";
 import crypto from "crypto";
 import nodemailer from "nodemailer";
 import sendgridTransport from "nodemailer-sendgrid-transport";
-import { AuthenticationError } from 'apollo-server-express';
+import { AuthenticationError,UserInputError } from 'apollo-server-express';
 import {resetpassword} from "../emailtemplates/index.js"
 import ASYNC from 'async'
 dotenv.config();
@@ -24,11 +24,10 @@ export default {
       const user = await userModel.findById({ _id: me.id }).exec();
       return user;
     },
-    getCartInfo: async (parent, {curPage="1"}, { models: { userModel,productModel },me }, info) => {
+    getCartInfo: async (parent, args, { models: { userModel,productModel },me }, info) => {
       if (!me) {
         throw new AuthenticationError('You are not authenticated');
       }
-      const perPage=5
       const user = await userModel.findById({ _id: me.id }).exec();
       const cart =user.cart
       const array = cart.reverse().map(item => {
@@ -43,11 +42,7 @@ export default {
           date:item.date
         }
       })
-      const indexOflastCart=curPage * perPage
-      const indexOfFirstCart=indexOflastCart - perPage
-      const currentCart=array.slice(indexOfFirstCart,indexOflastCart)
-      const maxPage=Math.ceil(array.length / perPage)
-     return {curPage:curPage,maxPage:maxPage,productCount:array.length,cart:currentCart}
+     return {productCount:array.length,cart:array}
     },
     getHistoryInfo: async (parent, {curPage="1",keyword}, { models: { userModel },me }, info) => {
       if (!me) {
@@ -233,7 +228,7 @@ export default {
         throw new AuthenticationError('You are not authenticated');
       }
       
-    const userInfo=  await userModel.findOne({_id:me.id})
+    const userInfo=  await userModel.findOne({_id:me.id}) 
         let duplicate = false
         userInfo.cart.map((item)=>{
           if (item.id == id) {
@@ -251,6 +246,9 @@ export default {
             }
           )
         }else{
+          if(userInfo.cart.length > 9) {
+            throw new UserInputError('You can only have 10 items in your cart.  Just purchase those items and add something new to your cart.');
+          }
           userModel.findOneAndUpdate(
            {_id:me.id},
            {$push:{cart:{id:id,productName:productName,price:price,image:image,quantity:quantity,storeOwner:storeOwner,storeName:storeName,date:new Date()}}},

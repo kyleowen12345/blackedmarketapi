@@ -68,7 +68,7 @@ scalar Date
  
   extend type Query {
     user: User!
-    getCartInfo(curPage:String!): cartPaginate!
+    getCartInfo: cartPaginate!
     getHistoryInfo(curPage:String!,keyword:String): historyPaginate!
     getFollowingStore(curPage:String!,keyword:String):followPaginate!
   }
