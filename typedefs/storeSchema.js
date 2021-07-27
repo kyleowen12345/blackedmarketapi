@@ -60,6 +60,7 @@ export default gql`
     getStoreStats(storeId:String!): StoreStatSheet!
     myStores(curPage:String!):Paginator!
     storeProducts(storeId:String!,curPage:String!,sortOrder:String!):StoreProducts!
+    allMyStores:[Store!]!
   }
   extend type Mutation {
    createStore(storeName:String!,storeAddress:String!,storeDescription:String!,storeType:String!,socialMediaAcc:String!,contactNumber:String!):Store!

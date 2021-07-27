@@ -80,7 +80,11 @@ export default {
         maxPage:Math.ceil(productCount / perPage),
         productCount:productCount
       }
-        },    
+        }, 
+    allMyStores: async (parent, args, { models: { storeModel },me }, info) => {
+         const myStores=await storeModel.find({sellerName:me.id}).sort(({'storeName':1}))
+         return myStores
+            },           
   },
   Mutation: {
     createStore: async (parent, {storeName, storeAddress, storeDescription,storeType,socialMediaAcc,contactNumber }, { models: { storeModel,userModel },me }, info) => {
