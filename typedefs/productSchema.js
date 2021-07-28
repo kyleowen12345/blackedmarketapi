@@ -8,7 +8,7 @@ export default gql`
     productName:String!
     Rating: String!
     price:Int!
-    productStocks:String!
+    productStocks:Int!
     sold:String!
     image:String!
     description:String!
@@ -43,9 +43,9 @@ extend type Query {
   }
   
 extend type Mutation{
-  createProduct(productName:String!,price:String!,productStocks:String!,description:String!,storeName:ID!):Product!
+  createProduct(productName:String!,price:Int!,productStocks:Int!,description:String!,storeName:ID!):Product!
   deleteProduct(id:ID!):Message!
-  updateProduct(id:ID!,productName:String!,price:String!,productStocks:String!,description:String!):Product!
+  updateProduct(id:ID!,productName:String!,price:Int!,productStocks:Int!,description:String!,storeName:ID!):Product!
   productImage(id:ID!,image:String!):Message!
   
 }

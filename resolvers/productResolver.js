@@ -105,7 +105,7 @@ export default {
       await productModel.findByIdAndDelete({_id:id})
       return {message:`Store Deleted`}
       },
-    updateProduct: async (parent, {id,productName,price, productStocks,description }, { models: { productModel },me }, info) => {
+    updateProduct: async (parent, {id,productName,price, productStocks,description,storeName }, { models: { productModel },me }, info) => {
         if(!me){
           throw new AuthenticationError('You are not authenticated');
         }
@@ -120,6 +120,7 @@ export default {
 		  productupdate.price=price
 		  productupdate.productStocks=productStocks
 		  productupdate.description=description
+      productupdate.storeName=storeName
 		  await productupdate.save()
       return productupdate
         
