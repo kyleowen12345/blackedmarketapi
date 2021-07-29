@@ -133,6 +133,10 @@ export default {
         if(prohibited.sellerName !=me.id){
          throw new AuthenticationError(`Your not authorized`);
         }
+        const takenName= await storeModel.findOne({storeName:storeName})
+        if(takenName){
+         throw new AuthenticationError(`${storeName} is already taken`);
+        }
       const storeupdate =await storeModel.findOne({_id:id})
       storeupdate.storeName=storeName
 		  storeupdate.storeAddress=storeAddress
