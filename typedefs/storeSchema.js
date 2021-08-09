@@ -53,6 +53,12 @@ export default gql`
     maxPage: Int
     productCount: Int
   }
+  type DashBoardInfo{
+    productCount:Int!
+    storeCount:Int!
+    stores:[Store!]!
+    products:[Product!]!
+  }
   extend type Query {
     storespaginate(curPage:String!,sortOrder:String!): Paginator!
     storeInfo(id:ID!):StoreswithProduct!
@@ -61,6 +67,7 @@ export default gql`
     myStores(curPage:String!):Paginator!
     storeProducts(storeId:String!,curPage:String!,sortOrder:String!):StoreProducts!
     allMyStores:[Store!]!
+    dashBoard:DashBoardInfo!
   }
   extend type Mutation {
    createStore(storeName:String!,storeAddress:String!,storeDescription:String!,storeType:String!,socialMediaAcc:String!,contactNumber:String!):Store!

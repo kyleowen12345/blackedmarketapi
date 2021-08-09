@@ -84,7 +84,20 @@ export default {
     allMyStores: async (parent, args, { models: { storeModel },me }, info) => {
          const myStores=await storeModel.find({sellerName:me.id}).sort(({'storeName':1}))
          return myStores
-            },           
+    }, 
+    dashBoard: async (parent, args, { models: { storeModel,productModel },me }, info) => {
+      const productCount=await productModel.find({storeOwner:me.id}).countDocuments()
+      const storeCount=await storeModel.find({sellerName:me.id}).countDocuments()
+      const products=await productModel.find({storeOwner:me.id}).sort(({'sold':-1})).limit(5)
+      const stores=await storeModel.find({sellerName:me.id}).sort({'followers':-1}).limit(5)
+      
+      return {
+        productCount:productCount,
+        storeCount:storeCount,
+        stores:stores,
+        products:products
+      }
+     },           
   },
   Mutation: {
     createStore: async (parent, {storeName, storeAddress, storeDescription,storeType,socialMediaAcc,contactNumber }, { models: { storeModel,userModel },me }, info) => {
