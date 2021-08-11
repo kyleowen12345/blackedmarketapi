@@ -47,7 +47,7 @@ export default {
             return product
           },
     productCategory: async (parent, {category,curPage=1,sortOrder}, { models: { productModel,storeModel },me }, info) => {
-      const perPage=5
+      const perPage=10
       const storeType=await storeModel.find({storeType:category})
       const productsToQuery=storeType.map(i=>i._id)
       const productType=await productModel.find({storeName:productsToQuery}).sort(({[sortOrder]:-1})).skip((curPage-1)* perPage).limit(perPage).exec()
@@ -64,7 +64,7 @@ export default {
       return products
     },
     searchProduct: async (parent, {product,curPage=1,sortOrder}, { models: { productModel },me }, info) => {
-      const perPage=5
+      const perPage=10
       const searchProduct=await productModel.find({productName:new RegExp(product,'i')}).sort(({[sortOrder]:-1})).skip((curPage-1)* perPage).limit(perPage).exec()
       const productSearchTotal=await productModel.find({productName:new RegExp(product,'i')}).countDocuments()
       return {
