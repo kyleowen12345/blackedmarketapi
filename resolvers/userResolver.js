@@ -344,11 +344,12 @@ export default {
       if (!me) {
         throw new AuthenticationError('You are not authenticated');
       }
-      await userModel.findOneAndUpdate(
+     const user= await userModel.findOneAndUpdate(
         {_id:me.id},
         {Seller:true},
         {new:true}
         )
+        return user
     },
   },
   
