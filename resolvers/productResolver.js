@@ -7,7 +7,7 @@ export default {
     //     throw new AuthenticationError('You are not authenticated');
     //   }
       const stores=await storeModel.find({}).sort(({'storeName':-1})).limit(15).exec();
-      const products = await productModel.find({}).sort(({'productName':1})).limit(15).exec();
+      const products = await productModel.find({}).sort(({'productName':1})).limit(20).exec();
       const deals = await productModel.find({}).sort(({'sold':-1})).limit(10).exec();
       
       return {stores,products,deals};
@@ -29,7 +29,7 @@ export default {
         //   if (!me) {
         //     throw new AuthenticationError('You are not authenticated');
         //   }
-        const perPage=15
+        const perPage=20
           const products = await productModel.find({}).sort(({[sortOrder]:-1})).skip((curPage-1)* perPage).limit(perPage).exec();
           const productCount =await productModel.find().countDocuments()
           return {

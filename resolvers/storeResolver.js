@@ -1,5 +1,4 @@
 import { AuthenticationError } from 'apollo-server-express';
-import ASYNC from 'async'
 export default {
   Query: {
     storespaginate: async (parent, {curPage=1,sortOrder='storeName'}, { models: { storeModel }, me }, info) => {
@@ -84,6 +83,20 @@ export default {
     allMyStores: async (parent, args, { models: { storeModel },me }, info) => {
          const myStores=await storeModel.find({sellerName:me.id}).sort(({'storeName':1}))
          return myStores
+    },
+    allMyStoresPaginated: async (parent, {curPage=1,sortOrder='storeName'}, { models: { storeModel },me }, info) => {
+      if (!me) {
+        throw new AuthenticationError('You are not authenticated');
+      }
+      const perPage=6
+      const myStores=await storeModel.find({sellerName:me.id}).sort(({[sortOrder]:-1})).skip((curPage-1)* perPage).limit(perPage).exec()
+      const storeCount =await storeModel.find({sellerName:me.id}).countDocuments()
+      return {
+        stores:myStores,
+        curPage:curPage,
+        maxPage:Math.ceil(storeCount / perPage),
+        storeCount:storeCount
+      }
     }, 
     dashBoard: async (parent, args, { models: { storeModel,productModel },me }, info) => {
       if (!me) {

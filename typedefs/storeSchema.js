@@ -67,6 +67,7 @@ export default gql`
     myStores(curPage:String!):Paginator!
     storeProducts(storeId:String!,curPage:String!,sortOrder:String!):StoreProducts!
     allMyStores:[Store!]!
+    allMyStoresPaginated(curPage:String!,sortOrder:String!):Paginator!
     dashBoard:DashBoardInfo!
   }
   extend type Mutation {
