@@ -84,13 +84,13 @@ export default {
          const myStores=await storeModel.find({sellerName:me.id}).sort(({'storeName':1}))
          return myStores
     },
-    allMyStoresPaginated: async (parent, {curPage=1,sortOrder='storeName'}, { models: { storeModel },me }, info) => {
+    allMyStoresPaginated: async (parent, {curPage=1,sortOrder='storeName',keyword}, { models: { storeModel },me }, info) => {
       if (!me) {
         throw new AuthenticationError('You are not authenticated');
       }
       const perPage=6
-      const myStores=await storeModel.find({sellerName:me.id}).sort(({[sortOrder]:-1})).skip((curPage-1)* perPage).limit(perPage).exec()
-      const storeCount =await storeModel.find({sellerName:me.id}).countDocuments()
+      const myStores=await storeModel.find({$and:[{sellerName:me.id,storeName:new RegExp(keyword,'i')}]}).sort(({[sortOrder]:-1})).skip((curPage-1)* perPage).limit(perPage).exec()
+      const storeCount =await storeModel.find({$and:[{sellerName:me.id,storeName:new RegExp(keyword,'i')}]}).countDocuments()
       return {
         stores:myStores,
         curPage:curPage,
