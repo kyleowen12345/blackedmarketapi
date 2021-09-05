@@ -9,7 +9,7 @@ export default gql`
     Rating: String!
     price:Int!
     productStocks:Int!
-    sold:String!
+    sold:Int!
     image:String!
     description:String!
     createdAt:Date!

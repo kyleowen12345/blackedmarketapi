@@ -113,7 +113,22 @@ export default {
         stores:stores,
         products:products
       }
-     },           
+     },
+     storeStats: async (parent, {id}, { models: {productModel },me }, info) => {
+      // if (!me) {
+      //   throw new AuthenticationError('You are not authenticated');
+      // }
+      const productCount=await productModel.find({storeName:id}).countDocuments()
+      const products=await productModel.find({storeName:id}).sort(({'sold':-1})).limit(5)
+      const soldCount= products?.reduce((acc,obj)=>{return acc + obj.sold},0)
+       
+     
+      return {
+        productCount:productCount,
+        productSoldCount:soldCount,
+        products:products
+      }
+     },                
   },
   Mutation: {
     createStore: async (parent, {storeName, storeAddress, storeDescription,storeType,socialMediaAcc,contactNumber }, { models: { storeModel,userModel },me }, info) => {
