@@ -12,6 +12,9 @@ export default gql`
     sold:Int!
     image:String!
     description:String!
+    discountType:String!
+    onDiscount:Boolean!
+    discount:Int!
     createdAt:Date!
     _id:ID!
   }

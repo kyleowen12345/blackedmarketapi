@@ -49,6 +49,22 @@ const Product = mongoose.model(
 			maxlength: 255,
 		
 		},
+		discountType:{
+			type: String,
+			min: 5,
+			maxlength: 255,
+		
+		},
+		onDiscount:{
+			type: Boolean,
+			default:false
+		
+		},
+		discount:{
+			type: Number,
+			default:0
+		
+		},
 		createdAt:{
 			type: Date,
 			default:new Date()

@@ -55,6 +55,7 @@ export default gql`
   }
   type DashBoardInfo{
     productCount:Int!
+    productSoldCount:Int!
     storeCount:Int!
     stores:[Store!]!
     products:[Product!]!

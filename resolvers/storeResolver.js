@@ -88,7 +88,7 @@ export default {
       if (!me) {
         throw new AuthenticationError('You are not authenticated');
       }
-      const perPage=6
+      const perPage=9
       const myStores=await storeModel.find({$and:[{sellerName:me.id,storeName:new RegExp(keyword,'i')}]}).sort(({[sortOrder]:-1})).skip((curPage-1)* perPage).limit(perPage).exec()
       const storeCount =await storeModel.find({$and:[{sellerName:me.id,storeName:new RegExp(keyword,'i')}]}).countDocuments()
       return {
@@ -103,24 +103,36 @@ export default {
         throw new AuthenticationError('You are not authenticated');
       }
       const productCount=await productModel.find({storeOwner:me.id}).countDocuments()
+
       const storeCount=await storeModel.find({sellerName:me.id}).countDocuments()
+
       const products=await productModel.find({storeOwner:me.id}).sort(({'sold':-1})).limit(5)
+
+      const allProducts=await productModel.find({storeOwner:me.id}).sort(({'sold':-1}))
+
+      const soldCount= allProducts?.reduce((acc,obj)=>{return acc + obj.sold},0)
+
       const stores=await storeModel.find({sellerName:me.id}).sort({'followers':-1}).limit(5)
       
       return {
         productCount:productCount,
+        productSoldCount:soldCount,
         storeCount:storeCount,
         stores:stores,
         products:products
       }
      },
      storeStats: async (parent, {id}, { models: {productModel },me }, info) => {
-      // if (!me) {
-      //   throw new AuthenticationError('You are not authenticated');
-      // }
+      if (!me) {
+        throw new AuthenticationError('You are not authenticated');
+      }
       const productCount=await productModel.find({storeName:id}).countDocuments()
+
       const products=await productModel.find({storeName:id}).sort(({'sold':-1})).limit(5)
-      const soldCount= products?.reduce((acc,obj)=>{return acc + obj.sold},0)
+
+      const allProducts=await productModel.find({storeName:id}).sort(({'sold':-1}))
+
+      const soldCount= allProducts?.reduce((acc,obj)=>{return acc + obj.sold},0)
        
      
       return {
