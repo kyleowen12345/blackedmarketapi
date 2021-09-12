@@ -5,7 +5,7 @@ export default {
     //   if (!me) {
     //     throw new AuthenticationError('You are not authenticated');
     //   }
-    const perPage=6
+    const perPage=9
       const stores = await storeModel.find({}).sort(({[sortOrder]:-1})).skip((curPage-1)* perPage).limit(perPage).exec();
       const storeCount =await storeModel.find().countDocuments()
       return {
@@ -88,7 +88,7 @@ export default {
       if (!me) {
         throw new AuthenticationError('You are not authenticated');
       }
-      const perPage=9
+      const perPage=6
       const myStores=await storeModel.find({$and:[{sellerName:me.id,storeName:new RegExp(keyword,'i')}]}).sort(({[sortOrder]:-1})).skip((curPage-1)* perPage).limit(perPage).exec()
       const storeCount =await storeModel.find({$and:[{sellerName:me.id,storeName:new RegExp(keyword,'i')}]}).countDocuments()
       return {

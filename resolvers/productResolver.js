@@ -6,8 +6,8 @@ export default {
     //   if (!me) {
     //     throw new AuthenticationError('You are not authenticated');
     //   }
-      const stores=await storeModel.find({}).sort(({'storeName':-1})).limit(15).exec();
-      const products = await productModel.find({}).sort(({'productName':1})).limit(20).exec();
+      const stores=await storeModel.find({}).sort(({'followers':-1})).limit(15).exec();
+      const products = await productModel.find({}).sort(({'createdAt':-1})).limit(20).exec();
       const deals = await productModel.find({}).sort(({'sold':-1})).limit(10).exec();
       
       return {stores,products,deals};
