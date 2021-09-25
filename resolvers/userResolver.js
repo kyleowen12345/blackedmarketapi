@@ -6,7 +6,7 @@ import nodemailer from "nodemailer";
 import sendgridTransport from "nodemailer-sendgrid-transport";
 import { AuthenticationError,UserInputError } from 'apollo-server-express';
 import {resetpassword} from "../emailtemplates/index.js"
-import ASYNC from 'async'
+// import ASYNC from 'async'
 dotenv.config();
 const transporter = nodemailer.createTransport(
 	sendgridTransport({
@@ -42,7 +42,7 @@ export default {
           date:item.date
         }
       })
-     return {productCount:array.length,cart:array}
+     return {productCount:cart.length,cart:array}
     },
     getHistoryInfo: async (parent, {curPage="1",keyword}, { models: { userModel },me }, info) => {
       if (!me) {
@@ -79,9 +79,13 @@ export default {
       })
 
       const indexOflastHistory=curPage * perPage
+
       const indexOfFirstHistory=indexOflastHistory - perPage
+
       const currentHistory=array.slice(indexOfFirstHistory,indexOflastHistory)
+
       const maxPage=Math.ceil(array.length / perPage)
+
      return {curPage:curPage,maxPage:maxPage,productCount:array.length,history:currentHistory}
     },
     getFollowingStore: async (parent, {curPage="1",keyword}, { models: { userModel,storeModel },me }, info) => {
@@ -111,11 +115,17 @@ export default {
           date:item.date,
         }
       })
+
      const stores=await storeModel.find({_id:{$in:array?.map(i=>i.id)}}).sort(({'storeName':1}))
+
       const indexOflastFollowing=curPage * perPage
+
       const indexOfFirstFollowing=indexOflastFollowing - perPage
+
       const currentFollow=stores.slice(indexOfFirstFollowing,indexOflastFollowing)
+
       const maxPage=Math.ceil(stores.length / perPage)
+
      return {curPage:curPage,maxPage:maxPage,followCount:array.length,follow:currentFollow}
     },
     
@@ -123,50 +133,73 @@ export default {
   Mutation: {
     createUser: async (parent, {name, email, password }, { models: { userModel } }, info) => {
       if(!name) throw new AuthenticationError('Please create a name')
+
       if(!email) throw new AuthenticationError('Please create a email')
+
       if(!password) throw new AuthenticationError('Please create a password')
+
       const savedUser=await userModel.findOne({email:email})
+
       if(savedUser) throw new AuthenticationError('Email Already exist')
+
       const hashedPassword=await bcrypt.hash(password,12)
+
       const user = await userModel.create({name, email, password:hashedPassword });
+
       const token = jwt.sign({ id: user.id,email:user.email,name:user.name,profilePic:user.profilePic }, 'riddlemethis', { expiresIn: '24h'  });
+
       return {token}
       
     },
     login: async (parent, { email, password }, { models: { userModel } }, info) => {
+
       if(!email)  throw new AuthenticationError('Please enter a email')
+
       if(!password) throw new AuthenticationError('Please enter a password')
+
       const user = await userModel.findOne({ email:email }).exec();
+
       if (!user) {
         throw new AuthenticationError('Invalid credentials');
       }
+
       const matchPasswords = bcrypt.compareSync(password, user.password);
+
       if (!matchPasswords) {
         throw new AuthenticationError('Invalid credentials');
       }
+
       const token = jwt.sign({ id: user.id,email:user.email,name:user.name,profilePic:user.profilePic }, 'riddlemethis', { expiresIn: '24h'  });
 
       return {token};
     },
     resetPassword: async (parent, { email }, { models: { userModel } }, info) => {
       if(!email)  throw new AuthenticationError('Please enter a email')
+
       let token=null
+
       try {
         crypto.randomBytes(32,(err,buffer)=>{
           if(err) throw new AuthenticationError(err);
            token=buffer.toString("hex")
         })
         const user=await userModel.findOne({email:email})
+
         if(!user)  throw new AuthenticationError('User with this email does not exist');
+
         user.resetToken=token
+
         user.expireToken=Date.now() + 3600000;
+
         await user.save()
+
         await transporter.sendMail({
            to:user.email,
            from:"blackedmarketconfig@gmail.com",
            subject:"Password reset",
            html:resetpassword(token)
         })
+
         return {token}
       } catch (error) {
         return error
@@ -175,16 +208,24 @@ export default {
     },
     newPassword: async (parent, { token,password }, { models: { userModel } }, info) => {
       if(!token)  throw new AuthenticationError('Access unauthorized')
+
       if(!password)  throw new AuthenticationError('Please fillout password')
+
        const newPassword=password
+
        const sentToken=token
+
        const user=await userModel.findOne({resetToken:sentToken,expireToken: { $gt: Date.now() }})
+
        if(!user) throw new AuthenticationError('Try again session expired');
+
        const hashedPassword=await bcrypt.hash(newPassword, 12)
+       
        user.password=hashedPassword
        user.resetToken = undefined;
 			 user.expireToken = undefined;
        await user.save()
+
        return {token:"password update success"}
     },  
     updateUser: async (parent, { name,email,contactNumber,country,city,SocialMediaAcc,zipcode }, { models: { userModel },me }, info) => {
@@ -192,6 +233,7 @@ export default {
         throw new AuthenticationError('You are not authenticated');
       }
       const user=await userModel.findOne({_id: me.id})
+
       if(!user)  throw new AuthenticationError('User not Found');
       user.name = name;
       user.email = email;
@@ -201,6 +243,7 @@ export default {
       user.zipcode = zipcode;
       user.SocialMediaAcc = SocialMediaAcc;
       await  user.save()
+      
       return user
     },
     updateUserImage: async (parent, {profilePic }, { models: { userModel },me }, info) => {
@@ -214,12 +257,17 @@ export default {
       return user
       },
     confirmUser: async (parent, {password }, { models: { userModel },me }, info) => {
+
       if(!me) throw new AuthenticationError('You are not authenticated')
+
       const confirmedUser=await userModel.findOne({_id:me.id})
+
       const matchPasswords = bcrypt.compareSync(password, confirmedUser.password);
+
       if (!matchPasswords) {
         throw new AuthenticationError('Invalid credentials');
       }
+
      return {token:"You are now confirmed"}
       
     },
@@ -272,7 +320,7 @@ export default {
         )
         return {token:`${id} quantity has been set`}
     },
-    removeItem: async (parent, {id }, { models: { userModel },me }, info) => {
+    removeCartItem: async (parent, {id }, { models: { userModel },me }, info) => {
       if (!me) {
         throw new AuthenticationError('You are not authenticated');
       }
@@ -288,7 +336,9 @@ export default {
         throw new AuthenticationError('You are not authenticated');
       }
       const userInfo=  await userModel.findOne({_id:me.id})
+
       const storeInfo= await storeModel.findOne({_id:id})
+      
       let duplicate = false
       userInfo.following.map((item)=>{
         if (item.id == id) {

@@ -6,32 +6,34 @@ export default {
     //   if (!me) {
     //     throw new AuthenticationError('You are not authenticated');
     //   }
+    
       const stores=await storeModel.find({}).sort(({'followers':-1})).limit(15).exec();
-      const products = await productModel.find({}).sort(({'createdAt':-1})).limit(20).exec();
+      
+      const products = await productModel.find({}).sort(({'createdAt':-1})).limit(20).exec(); 
+
       const deals = await productModel.find({}).sort(({'sold':-1})).limit(10).exec();
       
       return {stores,products,deals};
     },
     productInfo: async (parent, {id}, { models: { productModel } }, info) => {
-      //   if (!me) {
-      //     throw new AuthenticationError('You are not authenticated');
-      //   }
-     
+    
         const product = await productModel.findById({_id:id}).exec()
     
-        const relatedproducts= await productModel.find({storeName:product.storeName}).exec()
+        const relatedproducts= await productModel.find({storeName:product.storeName}).exec() 
+
         return {
           product,
           relatedProducts: relatedproducts.length
         }
       },
     productpaginate: async (parent, {curPage=1,sortOrder='productName'}, { models: { productModel }, me }, info) => {
-        //   if (!me) {
-        //     throw new AuthenticationError('You are not authenticated');
-        //   }
-        const perPage=20
+
+          const perPage=20
+
           const products = await productModel.find({}).sort(({[sortOrder]:-1})).skip((curPage-1)* perPage).limit(perPage).exec();
+
           const productCount =await productModel.find().countDocuments()
+
           return {
             products,
             curPage:curPage,
@@ -39,6 +41,7 @@ export default {
             productCount:productCount
           };
         },
+
     productInfoUpdate: async (parent, {id}, { models: { productModel },me }, info) => {
             if (!me) {
               throw new AuthenticationError('You are not authenticated');
@@ -46,12 +49,19 @@ export default {
             const product = await productModel.findById({_id:id}).exec()
             return product
           },
+
     productCategory: async (parent, {category,curPage=1,sortOrder}, { models: { productModel,storeModel },me }, info) => {
+
       const perPage=10
+
       const storeType=await storeModel.find({storeType:category})
+
       const productsToQuery=storeType.map(i=>i._id)
+
       const productType=await productModel.find({storeName:productsToQuery}).sort(({[sortOrder]:-1})).skip((curPage-1)* perPage).limit(perPage).exec()
+
       const productTypeTotal=await productModel.find({storeName:productsToQuery}).countDocuments()
+
       return {
         products:productType,
         curPage:curPage,
@@ -59,14 +69,19 @@ export default {
         productCount:productTypeTotal
       };
     },
+
     latestProduct: async (parent, args, { models: { productModel },me }, info) => {
       const products = await productModel.find({}).sort(({'createdAt':-1})).limit(15).exec();
       return products
     },
+
     searchProduct: async (parent, {product,curPage=1,sortOrder}, { models: { productModel },me }, info) => {
       const perPage=10
+
       const searchProduct=await productModel.find({productName:new RegExp(product,'i')}).sort(({[sortOrder]:-1})).skip((curPage-1)* perPage).limit(perPage).exec()
+
       const productSearchTotal=await productModel.find({productName:new RegExp(product,'i')}).countDocuments()
+
       return {
         products:searchProduct,
         curPage:curPage,
@@ -79,17 +94,21 @@ export default {
   Mutation: {
     
     createProduct: async (parent, { productName, price,productStocks,description,storeName }, { models: { productModel,userModel  }, me }, info) => {
+
       if (!me) {
         throw new AuthenticationError('You are not authenticated');
       }
-      const user=  await userModel.findById({_id:me.id})
+
+      const user=await userModel.findById({_id:me.id})
       if (user.Seller===false){
       throw new AuthenticationError('You are not a Seller');
       }
+
       const takenName= await productModel.findOne({productName:productName})
       if(takenName){
       throw new AuthenticationError(`${productName} is already taken`);
       }
+      
       const newProduct=new productModel({productName,price,productStocks,description,storeName,storeOwner:me.id})
       await newProduct.save()
       return newProduct
@@ -98,12 +117,13 @@ export default {
       if(!me){
         throw new AuthenticationError('You are not authenticated');
       }
+    
       const prohibited= await productModel.findById({_id:id})
-        if(prohibited.storeOwner !=me.id){
+        if(prohibited.storeOwner != me.id){
          throw new AuthenticationError(`Your not authorized`);
         }
       await productModel.findByIdAndDelete({_id:id})
-      return {message:`Store Deleted`}
+      return {message:`Product Deleted`}
       },
     updateProduct: async (parent, {id,productName,price, productStocks,description,storeName }, { models: { productModel },me }, info) => {
         if(!me){
@@ -111,18 +131,15 @@ export default {
         }
     const prohibited= await productModel.findById({_id:id})
     if(prohibited.storeOwner !=me.id){
-      console.log( typeof prohibited.storeOwner)
-      console.log( typeof me.id)
       throw new AuthenticationError(`Your not authorized`);
     }
-      const productupdate =await productModel.findOne({_id:id})
-      productupdate.productName=productName
-		  productupdate.price=price
-		  productupdate.productStocks=productStocks
-		  productupdate.description=description
-      productupdate.storeName=storeName
-		  await productupdate.save()
-      return productupdate
+      prohibited.productName=productName
+		  prohibited.price=price
+		  prohibited.productStocks=productStocks
+		  prohibited.description=description
+      prohibited.storeName=storeName
+		  await prohibited.save()
+      return prohibited
         
       },
     productImage: async (parent, {id,image }, { models: { productModel },me }, info) => {
@@ -133,10 +150,10 @@ export default {
         if(prohibited.storeOwner !=me.id){
          throw new AuthenticationError(`Your not authorized`);
         }
-        const product=await productModel.findById({_id:id})
-        product.image=image
-        product.save()
-        return {message:`Image Uplaoded`}
+
+        prohibited.image=image
+        prohibited.save()
+        return prohibited
         },  
   },
 Product: {

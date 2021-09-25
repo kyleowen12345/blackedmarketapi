@@ -79,7 +79,7 @@ export default gql`
   }
   extend type Mutation {
    createStore(storeName:String!,storeAddress:String!,storeDescription:String!,storeType:String!,socialMediaAcc:String!,contactNumber:String!):Store!
-   storeImage(id:ID!,storeBackgroundImage:String!):Message!
+   storeImage(id:ID!,storeBackgroundImage:String!):Store!
    deleteStore(id:ID!):Message!
    updateStore(id:ID!,storeName:String!,storeAddress:String!,storeDescription:String!,storeType:String!,socialMediaAcc:String!,contactNumber:String!):Store!
   }

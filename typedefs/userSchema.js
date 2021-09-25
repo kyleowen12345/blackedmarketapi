@@ -82,7 +82,7 @@ scalar Date
     confirmUser(password:String!):Token!
     addToCart(id:ID!,quantity:Int,productName:String!,image:String!,price:Int!,storeName:ID!,storeOwner:ID!): Cart!
     setQuantity(id:ID!,value:Int!):Token!
-    removeItem(id:ID!):Token!
+    removeCartItem(id:ID!):Token!
     followStore(id:ID!,storeName:String!,storeBackgroundImage:String!,storeType:String!):Store!
     unfollowStore(id:ID!):Token!
     seller:User!

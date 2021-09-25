@@ -49,7 +49,7 @@ extend type Mutation{
   createProduct(productName:String!,price:Int!,productStocks:Int!,description:String!,storeName:ID!):Product!
   deleteProduct(id:ID!):Message!
   updateProduct(id:ID!,productName:String!,price:Int!,productStocks:Int!,description:String!,storeName:ID!):Product!
-  productImage(id:ID!,image:String!):Message!
+  productImage(id:ID!,image:String!):Product!
   
 }
 

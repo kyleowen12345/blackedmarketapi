@@ -5,9 +5,13 @@ export default {
     //   if (!me) {
     //     throw new AuthenticationError('You are not authenticated');
     //   }
-    const perPage=9
+
+      const perPage=9
+
       const stores = await storeModel.find({}).sort(({[sortOrder]:-1})).skip((curPage-1)* perPage).limit(perPage).exec();
+
       const storeCount =await storeModel.find().countDocuments()
+
       return {
         stores,
         curPage:curPage,
@@ -16,8 +20,11 @@ export default {
       };
     },
     storeInfo: async (parent, {id}, { models: { storeModel,productModel },me }, info) => {
+
         const store = await storeModel.findById({_id:id}).exec()
-        let follower= false
+         
+        // TO DETERMINE IF A USER IS A FOLLOWER
+        let follower = false
         if(me){
           store.followers.map((item)=>{
             if (item.id == me.id) {
@@ -25,7 +32,9 @@ export default {
             }
           })
         }
+        
         const storeProducts=await productModel.find({storeName:id}).limit(10).exec()
+
         return {store:store,products:storeProducts,isUserAFollower:follower}
       },
     storeInfoUpdate: async (parent, {id}, { models: { storeModel },me }, info) => {
@@ -34,13 +43,14 @@ export default {
           }
        
           const store = await storeModel.findById({_id:id}).exec()
+
           return store
         },
     getStoreStats: async (parent, {storeId}, { models: { paymentModel,storeModel },me }, info) => {
           if (!me) {
             throw new AuthenticationError('You are not authenticated');
           }
-       
+        // Unsure what to do here think about it first
           const store = await paymentModel.find({})
           const youStore=await storeModel.findById({_id:storeId}).exec()
           const result=store.map(i=>i.product)
@@ -59,9 +69,12 @@ export default {
           if (!me) {
             throw new AuthenticationError('You are not authenticated');
           }
-          const perPage=5
+        const perPage=5
+
         const mystores=await storeModel.find({sellerName:me.id}).sort(({'storeName':-1})).skip((curPage-1)* perPage).limit(perPage).exec()
+
         const storeCount =await storeModel.find({sellerName:me.id}).countDocuments()
+
         return {
           stores:mystores,
           curPage:curPage,
@@ -70,9 +83,13 @@ export default {
         };
         },
     storeProducts: async (parent, {storeId,curPage,sortOrder}, { models: { storeModel,productModel },me }, info) => {
+
       const perPage=15
+     
       const storeProducts=await productModel.find({storeName:storeId}).sort(({[sortOrder]:-1})).skip((curPage-1)*perPage).limit(perPage).exec()
+
       const productCount=await productModel.find({storeName:storeId}).countDocuments()
+
       return {
         products:storeProducts,
         curPage:curPage,
@@ -81,7 +98,9 @@ export default {
       }
         }, 
     allMyStores: async (parent, args, { models: { storeModel },me }, info) => {
+
          const myStores=await storeModel.find({sellerName:me.id}).sort(({'storeName':1}))
+
          return myStores
     },
     allMyStoresPaginated: async (parent, {curPage=1,sortOrder='storeName',keyword}, { models: { storeModel },me }, info) => {
@@ -89,8 +108,12 @@ export default {
         throw new AuthenticationError('You are not authenticated');
       }
       const perPage=6
+
+    
       const myStores=await storeModel.find({$and:[{sellerName:me.id,storeName:new RegExp(keyword,'i')}]}).sort(({[sortOrder]:-1})).skip((curPage-1)* perPage).limit(perPage).exec()
+
       const storeCount =await storeModel.find({$and:[{sellerName:me.id,storeName:new RegExp(keyword,'i')}]}).countDocuments()
+
       return {
         stores:myStores,
         curPage:curPage,
@@ -102,20 +125,34 @@ export default {
       if (!me) {
         throw new AuthenticationError('You are not authenticated');
       }
-      const productCount=await productModel.find({storeOwner:me.id}).countDocuments()
+      // LIMIT TO 2 QUERIES
+      // const productCount=await productModel.find({storeOwner:me.id}).countDocuments()
 
-      const storeCount=await storeModel.find({sellerName:me.id}).countDocuments()
+      // const storeCount=await storeModel.find({sellerName:me.id}).countDocuments()
 
-      const products=await productModel.find({storeOwner:me.id}).sort(({'sold':-1})).limit(5)
+      // const products=await productModel.find({storeOwner:me.id}).sort(({'sold':-1})).limit(5)
 
-      const allProducts=await productModel.find({storeOwner:me.id}).sort(({'sold':-1}))
+      // const allProducts=await productModel.find({storeOwner:me.id}).sort(({'sold':-1}))
 
-      const soldCount= allProducts?.reduce((acc,obj)=>{return acc + obj.sold},0)
+      // const soldCount= allProducts?.reduce((acc,obj)=>{return acc + obj.sold},0)
 
-      const stores=await storeModel.find({sellerName:me.id}).sort({'followers':-1}).limit(5)
+      // const stores=await storeModel.find({sellerName:me.id}).sort({'followers':-1}).limit(5)
+
+
+      // get all followers
+
+       const allProducts= await productModel.find({storeOwner:me.id}).sort(({'sold':-1}))
+
+       const soldCount= allProducts?.reduce((acc,obj)=>{return acc + obj.sold},0)
       
+       const products=allProducts.slice(0,5)
+       
+       const storeCount=await storeModel.find({sellerName:me.id}).countDocuments()
+
+       const stores=await storeModel.find({sellerName:me.id}).sort({'followers':-1}).limit(5)
+
       return {
-        productCount:productCount,
+        productCount:allProducts.length,
         productSoldCount:soldCount,
         storeCount:storeCount,
         stores:stores,
@@ -126,17 +163,16 @@ export default {
       if (!me) {
         throw new AuthenticationError('You are not authenticated');
       }
-      const productCount=await productModel.find({storeName:id}).countDocuments()
-
-      const products=await productModel.find({storeName:id}).sort(({'sold':-1})).limit(5)
 
       const allProducts=await productModel.find({storeName:id}).sort(({'sold':-1}))
+
+      const products=allProducts.slice(0,5)
 
       const soldCount= allProducts?.reduce((acc,obj)=>{return acc + obj.sold},0)
        
      
       return {
-        productCount:productCount,
+        productCount:allProducts.length,
         productSoldCount:soldCount,
         products:products
       }
@@ -164,19 +200,25 @@ export default {
     if(!me){
       throw new AuthenticationError('You are not authenticated');
     }
-    const store=await storeModel.findById({_id:id})
+    const store= await storeModel.findById({_id:id})
+        if(store.sellerName != me.id){
+          console.log(store.sellerName)
+          console.log(me.id)
+         throw new AuthenticationError(`Your not authorized`);
+    }
     store.storeBackgroundImage=storeBackgroundImage
     store.save()
-    return {message:`Image Uplaoded`}
+    return store
     },
     deleteStore: async (parent, {id }, { models: { storeModel,productModel },me }, info) => {
       if(!me){
         throw new AuthenticationError('You are not authenticated');
       }
       const prohibited= await storeModel.findById({_id:id})
-        if(prohibited.sellerName !=me.id){
+        if(prohibited.sellerName != me.id){
          throw new AuthenticationError(`Your not authorized`);
         }
+        
       await storeModel.findByIdAndDelete({_id:id})
       await productModel.deleteMany({storeName:id})
       return {message:`Store Deleted`}
@@ -186,22 +228,21 @@ export default {
           throw new AuthenticationError('You are not authenticated');
         }
         const prohibited= await storeModel.findById({_id:id})
-        if(prohibited.sellerName !=me.id){
+        if(prohibited.sellerName != me.id){
          throw new AuthenticationError(`Your not authorized`);
         }
         const takenName= await storeModel.findOne({storeName:storeName})
         if(takenName){
          throw new AuthenticationError(`${storeName} is already taken`);
         }
-      const storeupdate =await storeModel.findOne({_id:id})
-      storeupdate.storeName=storeName
-		  storeupdate.storeAddress=storeAddress
-		  storeupdate.storeDescription=storeDescription
-		  storeupdate.storeType=storeType
-		  storeupdate.socialMediaAcc=socialMediaAcc
-      storeupdate.contactNumber=contactNumber
-		  await storeupdate.save()
-      return storeupdate
+        prohibited.storeName=storeName
+        prohibited.storeAddress=storeAddress
+        prohibited.storeDescription=storeDescription
+        prohibited.storeType=storeType
+        prohibited.socialMediaAcc=socialMediaAcc
+        prohibited.contactNumber=contactNumber
+		  await prohibited.save()
+      return prohibited
         
       },
   },
