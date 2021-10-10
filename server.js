@@ -45,7 +45,7 @@ export  const getUser = async (req) => {
   
     if (token) {
       try {
-        return await jwt.verify(token, 'riddlemethis');
+        return await jwt.verify(token, process.env.SECRET_KEY);
       } catch (e) {
         throw new AuthenticationError('Your session expired. Sign in again.');
       }
