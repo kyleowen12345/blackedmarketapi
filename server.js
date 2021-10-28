@@ -16,6 +16,7 @@ import userModel from './models/userModel.js';
 import storeModel from './models/storeModel.js';
 import productModel from './models/productModel.js'
 import paymentModel from './models/paymentModel.js';
+import cartModel from './models/cartModel.js'
 
 dotenv.config();
 const app = express();
@@ -51,9 +52,11 @@ export  const getUser = async (req) => {
       }
     }
   };
+
   app.get('/',(req,res)=>{
     res.send('qwseqwe')
   })
+
   const server = new ApolloServer({
     typeDefs: schemas,
     resolvers,
@@ -67,7 +70,8 @@ export  const getUser = async (req) => {
             userModel,
             storeModel,
             productModel,
-            paymentModel
+            paymentModel,
+            cartModel
           },
         };
       }
@@ -75,7 +79,7 @@ export  const getUser = async (req) => {
   });
 
 
-  server.applyMiddleware({ app, path: '/graphql' });
+server.applyMiddleware({ app, path: '/graphql' });
 const port =process.env.PORT || 4000
 app.listen(port, () => {
     console.log(`Server will start at ${port}`)
