@@ -2,13 +2,27 @@ import { AuthenticationError, UserInputError,ValidationError } from 'apollo-serv
 import ASYNC from 'async'
 export default {
   Query: {
-    usercart: async (parent, args, { models: { cartModel }, me }, info) => {
+    usercart: async (parent, {offset,limit}, { models: { cartModel }, me }, info) => {
           if (!me) {
             throw new AuthenticationError('You are not authenticated');
           }
-        const cart = await cartModel.find({user:me.id}).sort({"createdAt":-1})
-
-        return cart
+        const cart = await cartModel.find({user:me.id}).sort({"createdAt":-1}).skip(offset||0).limit(limit || 1)
+        const count =await cartModel.find({user:me.id}).sort({"createdAt":-1}).countDocuments()
+        return {
+          cart,
+          offset:offset || 0,
+          limit:limit || 1,
+          cartCount: count
+        }
+          
+        },
+        cartCount: async (parent, args, { models: { cartModel }, me }, info) => {
+          if (!me) {
+            throw new AuthenticationError('You are not authenticated');
+          }
+        
+        const count =await cartModel.find({user:me.id}).sort({"createdAt":-1}).countDocuments()
+        return {count}
           
         },
   },

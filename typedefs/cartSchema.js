@@ -8,6 +8,15 @@ export default gql`
     quantity:Int!
     
   }
+  type PaginatedCart{
+    cart:[_Cart]!
+    offset:Int!
+    limit:Int!
+    cartCount:Int!
+  }
+  type CartCount{
+    count:Int!
+  }
 
   input CartInput {
     cartId: ID!
@@ -21,6 +30,7 @@ export default gql`
      storeOwner:ID!
      paymentId:String!
      buyer:ID!
+     dateOfPurchase:Date!
    }
 
    type CartPurchase {
@@ -31,13 +41,15 @@ export default gql`
     storeOwner:User!
     paymentId:String!
     buyer:User!
+    dateOfPurchase:Date!
   }
 
 
 
 
   extend type Query {
-    usercart:[_Cart]!
+    usercart(offset:Int!,limit:Int!):PaginatedCart!
+    cartCount:CartCount!
   }
   
   extend type Mutation{
