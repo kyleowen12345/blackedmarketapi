@@ -1,7 +1,7 @@
 # blackedmarketapi
 
-# ENV variables
+### ENV variables
 
-MONGO_URI
-API_KEY
-PUBLIC_URL
+- MONGO_URI
+- API_KEY
+- PUBLIC_URL
