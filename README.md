@@ -1,4 +1,10 @@
-# blackedmarketapi
+# BlackedMarketApi
+
+First, run the development server:
+
+```bash
+npm run dev
+```
 
 ### ENV variables
 
